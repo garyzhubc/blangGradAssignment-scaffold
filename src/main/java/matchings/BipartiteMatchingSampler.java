@@ -30,6 +30,16 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this. 
+	  BipartiteMatching match = matching;
+	  double logf = logDensity();
+	  matching.sampleUniform(rand);   
+	  System.out.print(match.getConnections());
+	  System.out.print(matching.getConnections());
+	  System.out.print('\n');
+	  
+	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(this.logDensity()-logf)))) {
+		  matching = match;
+	  }
   }
   
   private double logDensity() {
