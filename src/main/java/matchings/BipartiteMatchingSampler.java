@@ -38,7 +38,7 @@ public class BipartiteMatchingSampler implements Sampler {
 //	  System.out.print(matching.getConnections());
 //	  System.out.print('\n');
 	  
-	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(this.logDensity()-logf)))) {
+	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(logf-logDensity())))) {
 		  matching = match;
 		  numericFactors = numF;
 	  }

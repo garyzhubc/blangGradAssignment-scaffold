@@ -39,7 +39,7 @@ public class PermutationSampler implements Sampler {
 //	  System.out.print(permutation.getConnections());
 //	  System.out.print('\n');
 	  
-	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(this.logDensity()-logf)))) {
+	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(logf-logDensity())))) {
 		  permutation = perm;
 		  numericFactors = numF;
 	  }
