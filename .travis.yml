@@ -1,5 +1,7 @@
 language: java
-email:
+
+notifications:
+  email:
    - garyzhubc@gmail.com
 script:
    - gradle check -i
