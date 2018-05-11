@@ -31,6 +31,7 @@ public class PermutationSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this. 
+	  permutation.sampleUniform(rand);   
   }
   
   private double logDensity() {
