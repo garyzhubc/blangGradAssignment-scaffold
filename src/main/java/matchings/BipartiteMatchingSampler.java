@@ -32,13 +32,15 @@ public class BipartiteMatchingSampler implements Sampler {
     // Fill this. 
 	  BipartiteMatching match = matching;
 	  double logf = logDensity();
+	  List<LogScaleFactor> numF = numericFactors;
 	  matching.sampleUniform(rand);   
-	  System.out.print(match.getConnections());
-	  System.out.print(matching.getConnections());
-	  System.out.print('\n');
+//	  System.out.print(match.getConnections());
+//	  System.out.print(matching.getConnections());
+//	  System.out.print('\n');
 	  
 	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(this.logDensity()-logf)))) {
 		  matching = match;
+		  numericFactors = numF;
 	  }
   }
   
