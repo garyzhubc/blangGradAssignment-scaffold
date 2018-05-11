@@ -31,7 +31,16 @@ public class PermutationSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this. 
+	  Permutation perm = permutation;
+	  double logf = logDensity();
 	  permutation.sampleUniform(rand);   
+	  System.out.print(perm.getConnections());
+	  System.out.print(permutation.getConnections());
+	  System.out.print('\n');
+	  
+	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(this.logDensity()-logf)))) {
+		  permutation = perm;
+	  }
   }
   
   private double logDensity() {

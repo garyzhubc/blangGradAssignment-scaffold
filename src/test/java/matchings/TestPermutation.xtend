@@ -17,7 +17,7 @@ class TestPermutation {
       [new ArrayList((model as UniformPermutation).permutation.getConnections)]
     )
   
-  @Test 
+  @Test  
   def void stateSize() {
     test.checkStateSpaceSize(factorial(size) as int)
   }
