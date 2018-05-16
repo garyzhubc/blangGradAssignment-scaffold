@@ -16,7 +16,6 @@ model PermutedClustering {
   random Matrix observations ?: latentMatrix(nGroups, groupSize)
   
   laws {
-    // Fill this. 
-    
+    // Fill this.
   }
 }
