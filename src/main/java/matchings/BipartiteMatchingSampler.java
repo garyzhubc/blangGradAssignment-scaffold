@@ -86,7 +86,7 @@ public class BipartiteMatchingSampler implements Sampler {
 		  log_prob_nto = Math.log(1/(Math.pow(n-1,2)+1)); // todo: check
 	  } else if (k==0) {
 		  // full matching
-		  System.out.print("full matching\n");
+		  System.out.print("full matching");
 		  i = rand.nextInt(n);
 		  conn.set(i,-1);
 		  // both equals 1/n
