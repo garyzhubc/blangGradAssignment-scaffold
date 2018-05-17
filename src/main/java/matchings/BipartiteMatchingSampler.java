@@ -148,13 +148,14 @@ public class BipartiteMatchingSampler implements Sampler {
 	  if (!p) {
 		  // if don't accept, restore old connections
 		  conn = conn_o;
-		  System.out.print(conn);
+//		  System.out.print(conn);
 //		  System.out.print("don't accept\n");
-	  } else {
-		  System.out.print(conn);
-		  System.out.print("\n");
+	  } 
+//	  else {
+//		  System.out.print(conn);
+//		  System.out.print("\n");
 //		  System.out.print("accept\n");
-	  }
+//	  }
   }
   
   private double logDensity() {
