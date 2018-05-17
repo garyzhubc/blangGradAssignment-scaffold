@@ -32,93 +32,118 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this.
-//	  System.out.print(matching.getConnections());
+	  System.out.print("\nnew iteration\n");
+	  System.out.print(matching.getConnections());
+	  System.out.print("\n");
 //	  matching.sampleUniform(rand);
-//	  System.out.print(matching.getConnections());
+//	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
+//	  System.out.print(matching.free1()); // [0, 3, 4]
+//	  System.out.print(matching.free2()); // [0, 1, 4]
 //	  System.out.print("\n");
+	  // empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
+	  // partial matching - add or delete one edge (or swap?) [2 3 -1] -> [-1 3 -1] or [-1 2 -1] (or [3 2 -1]?) : add or delete uniformly
+	  // full matching - delete one edge (or swap?) [0 2 1] -> [-1 2 1] (or [0 1 2]?): choose i uniformly and set to -1
+	  
+	  // make copy
+	  double log_prob_o = logDensity();
+	  List<Integer> conn_o = new ArrayList<Integer>(matching.getConnections());
+	  
+	  // set quantities
 	  List<Integer> conn = matching.getConnections();
 	  List<Integer> fr1 = matching.free1();
 	  List<Integer> fr2 = matching.free2();
-	  int n = conn.size();
-	  int k = fr1.size();
+	  int n = matching.componentSize();
+	  int k = matching.free1().size();
 	  int m = n-k;
-//	  System.out.print(factorial(3));
-	  double logprob_old = logDensity();
-	  List<Integer> conn_old = new ArrayList<Integer>(conn);
-	  // copy the right way?
-//	  Collections.copy(conn_old, conn);
-//	  for (int i=0;i<n;i++) {
-//		   conn_old.add(conn.get(i));
-//	  }
-	  int i = rand.nextInt(n-1);
-//	  int j = rand.nextInt(n-2);
-//	  if (i>=j)
-//		  j += 1;
-	  int j = rand.nextInt(n-1);
-	  int ith_val = conn.get(i);
-	  int jth_val = conn.get(j);
-	  double logprob_nto;
-	  double logprob_otn;
-	  System.out.print(conn);
-	  System.out.print(i);
-	  System.out.print(j);
-	  if (ith_val==BipartiteMatching.FREE) {
-		  if (jth_val==BipartiteMatching.FREE) {
-			  // both free: match i with j
-			  conn.set(i,jth_val);
-//			  logprob_otn = 1/binom(n,2);
-//			  logprob_nto = ;
-			  System.out.print("action1");
-		  } else {
-			  // only i is free: set j free
-			  conn.set(j,BipartiteMatching.FREE);
-//			  logprob_otn = 1/binom(n,2);
-//			  logprob_nto = ;
-			  System.out.print("action2");
-		  }
+	  List<Integer> unfr1 = new ArrayList<Integer>();
+	  for (int p=0;p<n;p++) {
+		  if (conn.get(p)!=-1)
+			  unfr1.add(p);
+	  }
+//	  System.out.print(unfr1);
+//	  System.out.print(n);
+//	  System.out.print(k);
+//	  System.out.print(m);
+//	  System.out.print('\n');
+	  
+	  double log_prob_otn;
+	  double log_prob_nto;
+	  int i;
+	  int j;
+	  int l;
+	  int q;
+	  int s;
+	  int t;
+	  
+	  // todo: simplify three cases to one
+	  if (k==n) {
+		  // empty matching
+		  System.out.print("empty matching\n");
+		  i = rand.nextInt(n);
+		  j = rand.nextInt(n);
+		  conn.set(i,j);
+		  log_prob_otn = 1/Math.pow(n,2); // todo: check
+		  log_prob_nto = 1/(Math.pow(n-1,2)+1); // todo: check
+	  } else if (k==0) {
+		  // full matching
+		  System.out.print("full matching\n");
+		  i = rand.nextInt(n);
+		  conn.set(i,-1);
+		  log_prob_otn = 1/n; // todo: check
+		  log_prob_nto = 1/n; // todo: check
 	  } else {
-		  if (jth_val==BipartiteMatching.FREE) {
-			  // only j is free: set i free
-			  conn.set(i,BipartiteMatching.FREE);
-//			  logprob_otn = 1/binom(n,2);
-//			  logprob_nto = ;
-			  System.out.print("action3");
+		  // partial matching
+		  System.out.print("partial matching\n");
+		  System.out.printf("k=%d\n",k);
+		  System.out.printf("m=%d\n",m);
+		  i = rand.nextInt((int) Math.pow(k,2)+m);
+		  System.out.printf("k^2+m=%d\n",k^2+m);
+		  System.out.printf("i=%d\n",i);
+		  System.out.printf("m-1=%d\n",m-1);
+		  if (i<=m-1) {
+			  // delete an edge
+			  // need: indices that are not -1 
+			  System.out.print("delete an edge\n");
+			  j = unfr1.get(i);
+			  conn.set(i,-1);
+			  // total: k^2+m
+			  log_prob_otn = 1/(Math.pow(k,2)+m); // todo: check
+			  log_prob_nto = 1/(Math.pow(k-1,2)+m+1); // todo: check
 		  } else {
-			  // both are unfree: swap(i,j)
-			  rand.nextBernoulli(.5);
-			  Collections.swap(conn,i,j);
-//			  logprob_otn = 1/binom(n,2);
-//			  logprob_nto = ;
-			  System.out.print("action4");
+			  // add an edge
+			  System.out.print("add an edge\n");
+			  System.out.print(i);
+			  i = i-m;
+			  System.out.print(i);
+			  System.out.print(k);
+			  s = i/k;
+			  j = i%k;
+			  System.out.print(s);
+			  System.out.print(j);
+			  System.out.print(fr1);
+			  System.out.print(fr2);
+			  l = fr1.get(s);
+			  q = fr2.get(j);
+			  System.out.print(l);
+			  System.out.print(q);
+			  conn.set(l,q);
+			  System.out.print(conn);
+			  log_prob_otn = 1/(Math.pow(k,2)+m); // todo: check
+			  log_prob_nto = 1/(Math.pow(k+1,2)+m-1); // todo: check
 		  }
 	  }
-//	  double alpha = Math.min(1,Math.exp(logDensity()-logprob_old)*Math.exp(logprob_nto-logprob_otn));
-	  double alpha = Math.min(1,Math.exp(logDensity()-logprob_old));
-	  if (!rand.nextBernoulli(alpha)) {
-		  conn = conn_old;
-		  System.out.print("no action");
+	  // accept or reject
+	  double log_prob_n = logDensity();
+	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
+	  boolean p = rand.nextBernoulli(alpha);
+	  if (!p) {
+		  // if don't accept, restore old connections
+		  conn = conn_o;
+		  System.out.print(conn);
+		  System.out.print("don't accept\n");
 	  } else {
-		  System.out.print("action");
+		  System.out.print("accept\n");
 	  }
-	  System.out.print(conn);
-	  System.out.print("\n");
-  }
-  
-  private double binom(int n, int k) {
-	  // to be lognormalized
-	  if (k>n)
-		  throw new ArithmeticException("binom(n,k) where k>n!");
-	  return factorial(n)/(factorial(k)*factorial(n-k));
-  }
-  
-  private int factorial(int n) {
-	  // to be lognormalized
-	  if (n<0)
-		  throw new ArithmeticException("factorial <0!");
-	  int prod = 1;
-	  for (int i=2;i<=n;i++)
-		  prod *= i;
-	  return prod;
   }
   
   private double logDensity() {
