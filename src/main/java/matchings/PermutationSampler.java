@@ -30,19 +30,17 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-    // Fill this. 
-	  Permutation perm = permutation;
-	  double logf = logDensity();
-	  List<LogScaleFactor> numF = numericFactors;
-	  permutation.sampleUniform(rand);   
-//	  System.out.print(perm.getConnections());
-//	  System.out.print(permutation.getConnections());
-//	  System.out.print('\n');
-	  
-	  if (!Generators.bernoulli(rand,Math.min(1,Math.exp(logDensity()-logf)))) {
-		  permutation = perm;
-		  numericFactors = numF;
-	  }
+    /* startRem // Fill this. */
+    UnorderedPair<Integer, Integer> pair = Generators.distinctPair(rand, permutation.componentSize());
+    double logDensityBefore = logDensity();
+    Collections.swap(permutation.getConnections(), pair.getFirst(), pair.getSecond());
+    double logDensityAfter = logDensity();
+    double acceptPr = Math.min(1.0, Math.exp(logDensityAfter - logDensityBefore)); 
+    if (Generators.bernoulli(rand, acceptPr))
+      ;
+    else
+      Collections.swap(permutation.getConnections(), pair.getFirst(), pair.getSecond());
+    /* endRem */
   }
   
   private double logDensity() {
