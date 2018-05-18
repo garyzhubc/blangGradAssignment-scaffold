@@ -33,7 +33,7 @@ public class BipartiteMatchingSampler implements Sampler {
   public void execute(Random rand) {
     // Fill this.
 //	  System.out.print("\nnew iteration\n");
-//	  System.out.print(matching.getConnections());
+	  System.out.print(matching.getConnections());
 //	  System.out.print("\n");
 	  
 //	  matching.sampleUniform(rand);
@@ -136,13 +136,14 @@ public class BipartiteMatchingSampler implements Sampler {
 //		  }
 //	  }
 	  
-	  i = rand.nextInt(k*k+m);
+	  // simplified version
 	  if (k!=0) {
+		  i = rand.nextInt(k*k+m);
 		  if (i<=m-1) {
 			  j = unfr1.get(i);
 			  conn.set(j,-1);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
-			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
+			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
 		  } else {
 			  i = i-m;
 			  s = i/k;
@@ -151,7 +152,7 @@ public class BipartiteMatchingSampler implements Sampler {
 			  q = fr2.get(j);
 			  conn.set(l,q);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
-			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
+			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
 		  }
 	  } else {
 		  i = rand.nextInt(n);
@@ -173,7 +174,11 @@ public class BipartiteMatchingSampler implements Sampler {
 	  if (!d) {
 		  // if don't accept, restore old connections
 //		  System.out.print("reject\n");
+		  
+		  // make sure this works
 		  conn = conn_o;
+		  
+		  
 //		  System.out.print(conn);
 //		  System.out.print("\ndon't accept\n");
 	  } 
@@ -182,7 +187,13 @@ public class BipartiteMatchingSampler implements Sampler {
 //		  System.out.print("\n");
 //		  System.out.print("accept\n");
 //	  }
+	  
 	  System.out.print(conn);
+	  System.out.println(alpha);
+	  System.out.println(Math.exp(log_prob_n));
+	  System.out.println(Math.exp(log_prob_o));
+	  System.out.println(Math.exp(log_prob_nto));
+	  System.out.println(Math.exp(log_prob_otn));
 	  System.out.print("\n");
   }
   
