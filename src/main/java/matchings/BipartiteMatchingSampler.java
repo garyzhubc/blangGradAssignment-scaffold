@@ -32,9 +32,9 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this.
-	  System.out.print("\nnew iteration\n");
-	  System.out.print(matching.getConnections());
-	  System.out.print("\n");
+//	  System.out.print("\nnew iteration\n");
+//	  System.out.print(matching.getConnections());
+//	  System.out.print("\n");
 	  
 //	  matching.sampleUniform(rand);
 //	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
@@ -83,8 +83,8 @@ public class BipartiteMatchingSampler implements Sampler {
 		  i = rand.nextInt(n);
 		  j = rand.nextInt(n);
 		  conn.set(i,j);
-		  log_prob_otn = Math.log(1/Math.pow(n,2)); // todo: check
-		  log_prob_nto = Math.log(1/(Math.pow(n-1,2)+1)); // todo: check
+		  log_prob_otn = -Math.log(Math.pow(n,2)); // todo: check
+		  log_prob_nto = -Math.log(Math.pow(n-1,2)+1); // todo: check
 	  } else if (k==0) {
 		  // full matching
 //		  System.out.print("full matching\n");
@@ -95,7 +95,7 @@ public class BipartiteMatchingSampler implements Sampler {
 		  log_prob_nto = 0; // todo: check
 	  } else {
 		  // partial matching
-		  System.out.print("partial matching\n");
+//		  System.out.print("partial matching\n");
 //		  System.out.printf("k=%d\n",k);
 //		  System.out.printf("m=%d\n",m);
 		  i = rand.nextInt(k*k+m);
@@ -105,15 +105,15 @@ public class BipartiteMatchingSampler implements Sampler {
 		  if (i<=m-1) {
 			  // delete an edge
 			  // need: indices that are not -1 
-			  System.out.print("delete an edge\n");
+//			  System.out.print("delete an edge\n");
 			  j = unfr1.get(i);
 			  conn.set(j,-1);
 			  // total: k^2+m
-			  log_prob_otn = Math.log(1/(Math.pow(k,2)+m)); // todo: check
-			  log_prob_nto = Math.log(1/(Math.pow(k-1,2)+m+1)); // todo: check
+			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
+			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); // todo: check
 		  } else {
 			  // add an edge
-			  System.out.print("add an edge\n");
+//			  System.out.print("add an edge\n");
 //			  System.out.printf("i=%d\n",i);
 			  i = i-m;
 //			  System.out.printf("i_special=%d\n",i);
@@ -131,8 +131,8 @@ public class BipartiteMatchingSampler implements Sampler {
 //			  System.out.printf("l=%d\n",l);
 //			  System.out.printf("q=%d\n",q);
 			  conn.set(l,q);
-			  log_prob_otn = Math.log(1/(Math.pow(k,2)+m)); // todo: check
-			  log_prob_nto = Math.log(1/(Math.pow(k+1,2)+m-1)); // todo: check
+			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
+			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); // todo: check
 		  }
 	  }
 	  // accept or reject
@@ -147,7 +147,7 @@ public class BipartiteMatchingSampler implements Sampler {
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
 		  // if don't accept, restore old connections
-		  System.out.print("reject\n");
+//		  System.out.print("reject\n");
 		  conn = conn_o;
 //		  System.out.print(conn);
 //		  System.out.print("\ndon't accept\n");
