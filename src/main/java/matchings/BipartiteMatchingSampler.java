@@ -1,3 +1,63 @@
+//	  // todo: simplify three cases to one
+//	  if (k==n) {
+//		  // empty matching
+////		  System.out.print("empty matching\n");
+//		  i = rand.nextInt(n);
+//		  j = rand.nextInt(n);
+//		  conn.set(i,j);
+//		  log_prob_otn = -Math.log(Math.pow(n,2)); // todo: check
+//		  log_prob_nto = -Math.log(Math.pow(n-1,2)+1); // todo: check
+//	  } else if (k==0) {
+//		  // full matching
+////		  System.out.print("full matching\n");
+//		  i = rand.nextInt(n);
+//		  conn.set(i,-1);
+//		  // both equals 1/n
+//		  log_prob_otn = 0; // todo: check
+//		  log_prob_nto = 0; // todo: check
+//	  } else {
+//		  // partial matching
+////		  System.out.print("partial matching\n");
+////		  System.out.printf("k=%d\n",k);
+////		  System.out.printf("m=%d\n",m);
+//		  i = rand.nextInt(k*k+m);
+////		  System.out.printf("k^2+m=%d\n",k^2+m);
+////		  System.out.printf("i=%d\n",i);
+////		  System.out.printf("m-1=%d\n",m-1);
+//		  if (i<=m-1) {
+//			  // delete an edge
+//			  // need: indices that are not -1 
+////			  System.out.print("delete an edge\n");
+//			  j = unfr1.get(i);
+//			  conn.set(j,-1);
+//			  // total: k^2+m
+//			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
+//			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); // todo: check
+//		  } else {
+//			  // add an edge
+////			  System.out.print("add an edge\n");
+////			  System.out.printf("i=%d\n",i);
+//			  i = i-m;
+////			  System.out.printf("i_special=%d\n",i);
+////			  System.out.printf("k=%d\n",k);
+//			  s = i/k;
+//			  j = i%k;
+////			  System.out.printf("s=%d\n",s);
+////			  System.out.printf("j=%d\n",j);
+////			  System.out.print(fr1);
+////			  System.out.print("\n");
+////			  System.out.print(fr2);
+////			  System.out.print("\n");
+//			  l = fr1.get(s);
+//			  q = fr2.get(j);
+////			  System.out.printf("l=%d\n",l);
+////			  System.out.printf("q=%d\n",q);
+//			  conn.set(l,q);
+//			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
+//			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); // todo: check
+//		  }
+//	  }
+
 package matchings;
 
 import java.util.List;
@@ -76,66 +136,6 @@ public class BipartiteMatchingSampler implements Sampler {
 	  int s;
 	  int t;
 	  
-//	  // todo: simplify three cases to one
-//	  if (k==n) {
-//		  // empty matching
-////		  System.out.print("empty matching\n");
-//		  i = rand.nextInt(n);
-//		  j = rand.nextInt(n);
-//		  conn.set(i,j);
-//		  log_prob_otn = -Math.log(Math.pow(n,2)); // todo: check
-//		  log_prob_nto = -Math.log(Math.pow(n-1,2)+1); // todo: check
-//	  } else if (k==0) {
-//		  // full matching
-////		  System.out.print("full matching\n");
-//		  i = rand.nextInt(n);
-//		  conn.set(i,-1);
-//		  // both equals 1/n
-//		  log_prob_otn = 0; // todo: check
-//		  log_prob_nto = 0; // todo: check
-//	  } else {
-//		  // partial matching
-////		  System.out.print("partial matching\n");
-////		  System.out.printf("k=%d\n",k);
-////		  System.out.printf("m=%d\n",m);
-//		  i = rand.nextInt(k*k+m);
-////		  System.out.printf("k^2+m=%d\n",k^2+m);
-////		  System.out.printf("i=%d\n",i);
-////		  System.out.printf("m-1=%d\n",m-1);
-//		  if (i<=m-1) {
-//			  // delete an edge
-//			  // need: indices that are not -1 
-////			  System.out.print("delete an edge\n");
-//			  j = unfr1.get(i);
-//			  conn.set(j,-1);
-//			  // total: k^2+m
-//			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
-//			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); // todo: check
-//		  } else {
-//			  // add an edge
-////			  System.out.print("add an edge\n");
-////			  System.out.printf("i=%d\n",i);
-//			  i = i-m;
-////			  System.out.printf("i_special=%d\n",i);
-////			  System.out.printf("k=%d\n",k);
-//			  s = i/k;
-//			  j = i%k;
-////			  System.out.printf("s=%d\n",s);
-////			  System.out.printf("j=%d\n",j);
-////			  System.out.print(fr1);
-////			  System.out.print("\n");
-////			  System.out.print(fr2);
-////			  System.out.print("\n");
-//			  l = fr1.get(s);
-//			  q = fr2.get(j);
-////			  System.out.printf("l=%d\n",l);
-////			  System.out.printf("q=%d\n",q);
-//			  conn.set(l,q);
-//			  log_prob_otn = -Math.log(Math.pow(k,2)+m); // todo: check
-//			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); // todo: check
-//		  }
-//	  }
-	  
 	  // simplified version
 	  if (k!=0) {
 		  i = rand.nextInt(k*k+m);
@@ -176,25 +176,38 @@ public class BipartiteMatchingSampler implements Sampler {
 //		  System.out.print("reject\n");
 		  
 		  // make sure this works
-		  conn = conn_o;
+		  // why this doesn't work?
+		  
+//		  conn = conn_o;
+		  matching.getConnections().clear();
+		  matching.getConnections().addAll(conn_o);
+		  
+//		  for (int x = 0; x < conn_o.size(); x ++) { 
+//			  matching.getConnections().set(x, conn_o.get(x)); 
+//		  } 
 		  
 		  
 //		  System.out.print(conn);
 //		  System.out.print("\ndon't accept\n");
 	  } 
+	  
+	  // in fact connections has changed
+//	  System.out.print(matching.getConnections());
+//	  System.out.print("\n");
+	  
 //	  else {
 //		  System.out.print(conn);
 //		  System.out.print("\n");
 //		  System.out.print("accept\n");
 //	  }
 	  
-	  System.out.print(conn);
-	  System.out.println(alpha);
-	  System.out.println(Math.exp(log_prob_n));
-	  System.out.println(Math.exp(log_prob_o));
-	  System.out.println(Math.exp(log_prob_nto));
-	  System.out.println(Math.exp(log_prob_otn));
-	  System.out.print("\n");
+//	  System.out.print(conn);
+//	  System.out.println(alpha);
+//	  System.out.println(Math.exp(log_prob_n));
+//	  System.out.println(Math.exp(log_prob_o));
+//	  System.out.println(Math.exp(log_prob_nto));
+//	  System.out.println(Math.exp(log_prob_otn));
+//	  System.out.print("\n");
   }
   
   private double logDensity() {
