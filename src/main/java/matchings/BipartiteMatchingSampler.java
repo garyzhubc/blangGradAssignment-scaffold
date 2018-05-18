@@ -32,9 +32,9 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this.
-	  System.out.print("\nnew iteration\n");
-	  System.out.print(matching.getConnections());
-	  System.out.print("\n");
+//	  System.out.print("\nnew iteration\n");
+//	  System.out.print(matching.getConnections());
+//	  System.out.print("\n");
 	  
 //	  matching.sampleUniform(rand);
 //	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
@@ -79,7 +79,7 @@ public class BipartiteMatchingSampler implements Sampler {
 	  // todo: simplify three cases to one
 	  if (k==n) {
 		  // empty matching
-//		  System.out.print("empty matching\n");
+		  System.out.print("empty matching\n");
 		  i = rand.nextInt(n);
 		  j = rand.nextInt(n);
 		  conn.set(i,j);
@@ -95,7 +95,7 @@ public class BipartiteMatchingSampler implements Sampler {
 		  log_prob_nto = 0; // todo: check
 	  } else {
 		  // partial matching
-//		  System.out.print("partial matching\n");
+		  System.out.print("partial matching\n");
 //		  System.out.printf("k=%d\n",k);
 //		  System.out.printf("m=%d\n",m);
 		  i = rand.nextInt((int) Math.pow(k,2)+m);
@@ -105,7 +105,7 @@ public class BipartiteMatchingSampler implements Sampler {
 		  if (i<=m-1) {
 			  // delete an edge
 			  // need: indices that are not -1 
-//			  System.out.print("delete an edge\n");
+			  System.out.print("delete an edge\n");
 			  j = unfr1.get(i);
 			  conn.set(i,-1);
 			  // total: k^2+m
@@ -113,7 +113,7 @@ public class BipartiteMatchingSampler implements Sampler {
 			  log_prob_nto = Math.log(1/(Math.pow(k-1,2)+m+1)); // todo: check
 		  } else {
 			  // add an edge
-//			  System.out.print("add an edge\n");
+			  System.out.print("add an edge\n");
 //			  System.out.printf("i=%d\n",i);
 			  i = i-m;
 //			  System.out.printf("i_special=%d\n",i);
@@ -144,20 +144,20 @@ public class BipartiteMatchingSampler implements Sampler {
 
 	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
 //	  System.out.printf("alpha=%f\n",alpha);
-	  boolean p = rand.nextBernoulli(alpha);
-	  if (!p) {
+	  boolean d = rand.nextBernoulli(alpha);
+	  if (!d) {
 		  // if don't accept, restore old connections
 		  conn = conn_o;
 //		  System.out.print(conn);
 //		  System.out.print("\ndon't accept\n");
 	  } 
-	  else {
+//	  else {
 //		  System.out.print(conn);
 //		  System.out.print("\n");
 //		  System.out.print("accept\n");
-	  }
-	  System.out.print(conn);
-	  System.out.print("\n");
+//	  }
+//	  System.out.print(conn);
+//	  System.out.print("\n");
   }
   
   private double logDensity() {
