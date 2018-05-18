@@ -32,9 +32,9 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this.
-//	  System.out.print("\nnew iteration\n");
-//	  System.out.print(matching.getConnections());
-//	  System.out.print("\n");
+	  System.out.print("\nnew iteration\n");
+	  System.out.print(matching.getConnections());
+	  System.out.print("\n");
 	  
 //	  matching.sampleUniform(rand);
 //	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
@@ -149,13 +149,15 @@ public class BipartiteMatchingSampler implements Sampler {
 		  // if don't accept, restore old connections
 		  conn = conn_o;
 //		  System.out.print(conn);
-//		  System.out.print("don't accept\n");
+//		  System.out.print("\ndon't accept\n");
 	  } 
-//	  else {
+	  else {
 //		  System.out.print(conn);
 //		  System.out.print("\n");
 //		  System.out.print("accept\n");
-//	  }
+	  }
+	  System.out.print(conn);
+	  System.out.print("\n");
   }
   
   private double logDensity() {
