@@ -58,6 +58,57 @@
 //		  }
 //	  }
 
+	  // top comment
+//	  System.out.print("\nnew iteration\n");
+//	  System.out.print(matching.getConnections());
+//	  System.out.print("\n");
+//	  matching.sampleUniform(rand);
+//	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
+//	  System.out.print(matching.free1()); // [0, 3, 4]
+//	  System.out.print(matching.free2()); // [0, 1, 4]
+//	  System.out.print("\n");
+
+	  // top-middle comment
+//	  System.out.print(unfr1);
+//	  System.out.print(n);
+//	  System.out.print(k);
+//	  System.out.print(m);
+//	  System.out.print('\n');
+
+	  // middle-down comment
+//	  System.out.printf("log_prob_n=%f\n",log_prob_n);
+//	  System.out.printf("log_prob_o=%f\n",log_prob_o);
+//	  System.out.printf("log_prob_nto=%f\n",log_prob_nto);
+//	  System.out.printf("log_prob_otn=%f\n",log_prob_otn);
+
+          
+		  // make sure this works
+		  // why this doesn't work?
+//		  System.out.print("reject\n");
+//		  conn = conn_o;
+//		  for (int x = 0; x < conn_o.size(); x ++) { 
+//			  matching.getConnections().set(x, conn_o.get(x)); 
+//		  } 
+//		  System.out.print(conn);
+//		  System.out.print("\ndon't accept\n");
+
+	  // in fact connections has changed
+//	  System.out.print(matching.getConnections());
+//	  System.out.print("\n");
+//	  else {
+//		  System.out.print(conn);
+//		  System.out.print("\n");
+//		  System.out.print("accept\n");
+//	  }
+//	  System.out.print(conn);
+//	  System.out.println(alpha);
+//	  System.out.println(Math.exp(log_prob_n));
+//	  System.out.println(Math.exp(log_prob_o));
+//	  System.out.println(Math.exp(log_prob_nto));
+//	  System.out.println(Math.exp(log_prob_otn));
+//	  System.out.print("\n");
+
+
 package matchings;
 
 import java.util.List;
@@ -92,15 +143,7 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // Fill this.
-//	  System.out.print("\nnew iteration\n");
-	  System.out.print(matching.getConnections());
-//	  System.out.print("\n");
 	  
-//	  matching.sampleUniform(rand);
-//	  System.out.print(matching.getConnections()); // [-1, 2, 3, -1, -1]
-//	  System.out.print(matching.free1()); // [0, 3, 4]
-//	  System.out.print(matching.free2()); // [0, 1, 4]
-//	  System.out.print("\n");
 	  // empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
 	  // partial matching - add or delete one edge (or swap?) [2 3 -1] -> [-1 3 -1] or [-1 2 -1] (or [3 2 -1]?) : add or delete uniformly
 	  // full matching - delete one edge (or swap?) [0 2 1] -> [-1 2 1] (or [0 1 2]?): choose i uniformly and set to -1
@@ -121,20 +164,9 @@ public class BipartiteMatchingSampler implements Sampler {
 		  if (conn.get(p)!=-1)
 			  unfr1.add(p);
 	  }
-//	  System.out.print(unfr1);
-//	  System.out.print(n);
-//	  System.out.print(k);
-//	  System.out.print(m);
-//	  System.out.print('\n');
 	  
-	  double log_prob_otn;
-	  double log_prob_nto;
-	  int i;
-	  int j;
-	  int l;
-	  int q;
-	  int s;
-	  int t;
+	  double log_prob_otn,log_prob_nto;
+	  int i,j,l,q,s;
 	  
 	  // simplified version
 	  if (k!=0) {
@@ -163,51 +195,15 @@ public class BipartiteMatchingSampler implements Sampler {
 	  
 	  // accept or reject
 	  double log_prob_n = logDensity();
-//	  System.out.printf("log_prob_n=%f\n",log_prob_n);
-//	  System.out.printf("log_prob_o=%f\n",log_prob_o);
-//	  System.out.printf("log_prob_nto=%f\n",log_prob_nto);
-//	  System.out.printf("log_prob_otn=%f\n",log_prob_otn);
 
 	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
 //	  System.out.printf("alpha=%f\n",alpha);
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
 		  // if don't accept, restore old connections
-//		  System.out.print("reject\n");
-		  
-		  // make sure this works
-		  // why this doesn't work?
-		  
-//		  conn = conn_o;
 		  matching.getConnections().clear();
 		  matching.getConnections().addAll(conn_o);
-		  
-//		  for (int x = 0; x < conn_o.size(); x ++) { 
-//			  matching.getConnections().set(x, conn_o.get(x)); 
-//		  } 
-		  
-		  
-//		  System.out.print(conn);
-//		  System.out.print("\ndon't accept\n");
 	  } 
-	  
-	  // in fact connections has changed
-//	  System.out.print(matching.getConnections());
-//	  System.out.print("\n");
-	  
-//	  else {
-//		  System.out.print(conn);
-//		  System.out.print("\n");
-//		  System.out.print("accept\n");
-//	  }
-	  
-//	  System.out.print(conn);
-//	  System.out.println(alpha);
-//	  System.out.println(Math.exp(log_prob_n));
-//	  System.out.println(Math.exp(log_prob_o));
-//	  System.out.println(Math.exp(log_prob_nto));
-//	  System.out.println(Math.exp(log_prob_otn));
-//	  System.out.print("\n");
   }
   
   private double logDensity() {
