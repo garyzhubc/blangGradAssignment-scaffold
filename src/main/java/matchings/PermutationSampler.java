@@ -85,21 +85,21 @@ public class PermutationSampler implements Sampler {
 	// How to start execute?
     // How to make new sampler, and its tests?
 	  
-	System.out.println("new iteration");
+//	System.out.println("new iteration");
     
     // copy old
     List<Integer> conn = permutation.getConnections();
     double logprobpi = logDensity();
     
-    System.out.println(conn);
+//    System.out.println(conn);
     
     // get neighbourhood
     NeighbourhoodSpecifics nbs = getNeighbourhoodSpecifics();
     List<Permutation> perms = nbs.getPerms();
     List<Double> logprobs = nbs.getLogprobs();
     
-    System.out.println(perms);
-    System.out.println(logprobs);
+//    System.out.println(perms);
+//    System.out.println(logprobs);
     
     // normalize
     double[] primprobs = normalize(logprobs);
@@ -129,26 +129,26 @@ public class PermutationSampler implements Sampler {
     		i++;
     }
     
-    System.out.format("i=%d%nj=%d%n",i,j);
+//    System.out.format("i=%d%nj=%d%n",i,j);
     
     primprobs = normalize(logprobs);
     double probQji = primprobs[j];
     
-    System.out.format("logprobpj=%f%nlogprobpi=%f%nprobQji=%f%nprobQij=%f%n",logprobpj,logprobpi,probQji,probQij);
+//    System.out.format("logprobpj=%f%nlogprobpi=%f%nprobQji=%f%nprobQij=%f%n",logprobpj,logprobpi,probQji,probQij);
     
     // accept-reject
     double alpha = Math.min(1,Math.exp(logprobpj-logprobpi)*probQji/probQij);
     boolean p = rand.nextBernoulli(alpha);
     
-    System.out.println(alpha);
+//    System.out.println(alpha);
     
     if (!p) {
-    		System.out.println("reject proposal");
+//    		System.out.println("reject proposal");
     		permutation.getConnections().clear();
     		permutation.getConnections().addAll(conn);
     }
     
-    System.out.println(permutation.getConnections());
+//    System.out.println(permutation.getConnections());
   }
   
   
