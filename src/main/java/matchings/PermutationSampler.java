@@ -226,7 +226,7 @@ public class PermutationSampler implements Sampler {
 	    		probs.set(i, new Double(probs.get(i).doubleValue()/sum));
 	    }
 	    
-	    // Why this is not true?
+	    // Why this is not working?
 //	    for (Double prob: probs) {
 //			prob = prob/sum;
 //	    }
