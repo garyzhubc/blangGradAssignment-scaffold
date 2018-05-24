@@ -23,7 +23,7 @@ model PermutedClustering {
     for (int i : 0 ..< groupSize) { 
       variances.get(i) ~ Exponential(10)
     }
-    for(Permutation perm: permutations) {
+    for (Permutation perm: permutations) {
     	  perm ~ UniformPermutation
     }
     for (int j : 0 ..< nGroups) {

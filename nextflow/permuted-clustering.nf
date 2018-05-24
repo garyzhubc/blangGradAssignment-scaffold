@@ -75,8 +75,8 @@ process plotData {
   publishDir deliverableDir, mode: 'copy', overwrite: true
 
   """
-  #!/usr/bin/env Rscript
-
+  #!/usr/local/bin/Rscript
+  
   require("ggplot2")
   require("dplyr")
 
@@ -137,8 +137,8 @@ process plotPosterior {
     file "*.pdf" 
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  #!/usr/bin/env Rscript
-  
+  #!/usr/local/bin/Rscript
+
   require("ggplot2")
   require("dplyr")
 
