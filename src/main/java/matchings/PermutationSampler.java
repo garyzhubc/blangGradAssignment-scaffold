@@ -84,13 +84,13 @@ public class PermutationSampler implements Sampler {
 	// How to start execute?
     // How to make new sampler, and its tests?
 	  
-	System.out.println("new iteration");
+//	System.out.println("new iteration");
     
     // copy old
     List<Integer> conn = permutation.getConnections();
     double logprobpi = logDensity();
     
-    System.out.println(conn);
+//    System.out.println(conn);
     
     // get neighbourhood
     NeighbourhoodSpecifics nbs = getNeighbourhoodSpecifics();
@@ -150,7 +150,7 @@ public class PermutationSampler implements Sampler {
     		permutation.getConnections().addAll(conn);
     }
     
-    System.out.println(permutation.getConnections());
+//    System.out.println(permutation.getConnections());
   }
   
   

@@ -1,8 +1,4 @@
 language: java
-
-notifications:
-  email:
-   - garyzhubc@gmail.com
 script:
    - gradle check -i
 jdk:

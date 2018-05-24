@@ -1,0 +1,4 @@
+scriptName: permuted-clustering.nf
+start: Thu May 24 10:50:33 PDT 2018
+runName: extravagant_mestorf
+nextflow.version: 0.28.0

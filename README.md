@@ -1,7 +1,5 @@
 # Assignment on Blang
 
-[![Build Status](https://travis-ci.org/garyzhubc/blangGradAssignment-scaffold.png?branch=master)](https://travis-ci.org/garyzhubc/blangGradAssignment-scaffold)
-
 ## Prerequisites
 
 I assume you have already done the following (lecture and office hour last week):

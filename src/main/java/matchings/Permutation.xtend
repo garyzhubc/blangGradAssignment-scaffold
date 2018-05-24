@@ -5,9 +5,6 @@ import blang.mcmc.Samplers
 import java.util.Random
 import static java.util.Collections.sort
 import static java.util.Collections.shuffle
-import java.util.List
-import java.util.ArrayList
-import java.util.Collections
 
 /**
  * A permutation or equivalently, a bipartite perfect 
