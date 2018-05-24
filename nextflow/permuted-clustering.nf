@@ -76,8 +76,6 @@ process plotData {
 
   """
   #!/usr/bin/env Rscript
-  install.packages("ggplot2",repos = "http://cran.us.r-project.org")
-  install.packages("dplyr",repos = "http://cran.us.r-project.org")
 
   require("ggplot2")
   require("dplyr")
@@ -140,6 +138,7 @@ process plotPosterior {
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
   #!/usr/bin/env Rscript
+  
   require("ggplot2")
   require("dplyr")
 
