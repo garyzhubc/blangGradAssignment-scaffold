@@ -138,7 +138,7 @@ process plotPosterior {
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
   #!/usr/local/bin/Rscript
-
+  
   require("ggplot2")
   require("dplyr")
 

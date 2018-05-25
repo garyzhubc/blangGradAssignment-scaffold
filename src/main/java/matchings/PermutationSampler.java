@@ -90,15 +90,10 @@ public class PermutationSampler implements Sampler {
     List<Integer> conn = permutation.getConnections();
     double logprobpi = logDensity();
     
-//    System.out.println(conn);
-    
     // get neighbourhood
     NeighbourhoodSpecifics nbs = getNeighbourhoodSpecifics();
     List<Permutation> perms = nbs.getPerms();
     List<Double> logprobs = nbs.getLogprobs();
-    
-//    System.out.println(perms);
-//    System.out.println(logprobs);
     
     // normalize
     double[] primprobs = normalize(logprobs);
@@ -119,8 +114,6 @@ public class PermutationSampler implements Sampler {
     logprobs = nbs.getLogprobs();
     primprobs = normalize(logprobs);
     
-//    System.out.print(primprobs);
-    
     // normalize
     int i = 0;
     while (i<perms.size()) {
@@ -129,37 +122,18 @@ public class PermutationSampler implements Sampler {
     		}
     		i++;
     }
-    
-//    System.out.format("i=%d%nj=%d%n",i,j);
-    
     primprobs = normalize(logprobs);
     double probQji = primprobs[j];
-    
-//    System.out.print(primprobs);
-//    System.out.format("logprobpj=%f%nlogprobpi=%f%nprobQji=%f%nprobQij=%f%n",logprobpj,logprobpi,probQji,probQij);
     
     // accept-reject
     double alpha = Math.min(1,Math.exp(logprobpj-logprobpi)*probQji/probQij);
     boolean p = rand.nextBernoulli(alpha);
     
-//    System.out.println(alpha);
-    
     if (!p) {
-//    		System.out.println("reject proposal");
     		permutation.getConnections().clear();
     		permutation.getConnections().addAll(conn);
-    }
-    
-//    System.out.println(permutation.getConnections());
-  }
-  
-  
-  
-  
-  
-  
-  // encapsulated:
-  
+    }  
+}
   private final class NeighbourhoodSpecifics {
 	    private final List<Permutation> perms;
 	    private final List<Double> logprobs;
@@ -188,18 +162,13 @@ public class PermutationSampler implements Sampler {
 	    
 	    // collect neighbours obtained by swap
 	    for (int i=0;i<permutation.componentSize();i++) {
-//	    		System.out.format("NSi=%d\n",i);
 	    		for (int j=i+1;j<permutation.componentSize();++j) {
-//	    			System.out.format("NSj=%d\n",j);
 	    			Collections.swap(permutation.getConnections(), i, j);
 	    			Permutation perm = new Permutation(permutation.componentSize());
 	    			perm.getConnections().clear();
 	    			perm.getConnections().addAll(permutation.getConnections());
 	    			perms.add(perm);
 	    			logprobs.add(new Double(logDensity()));
-	    			
-//	    			System.out.println(permutation.getConnections());
-	    			
 	    			Collections.swap(permutation.getConnections(), i, j);
 	    		}
 	    	}
@@ -212,28 +181,13 @@ public class PermutationSampler implements Sampler {
 	    for (Double logprob: logprobs) {
 	    		probs.add(Math.exp((logprob-min)/2));
 	    }
-	    
-//	    System.out.print(probs);
-	    
 	    double sum = 0;
 	    for (Double prob: probs) {
 	    		sum += prob;
 	    }
-	    
-//	    System.out.print(sum);
-	    
 	    for (int i=0;i<probs.size();i++) {
 	    		probs.set(i, new Double(probs.get(i).doubleValue()/sum));
 	    }
-	    
-	    // Why this is not working?
-//	    for (Double prob: probs) {
-//			prob = prob/sum;
-//	    }
-	    
-//	    System.out.print(probs);
-
-	    
 	    double[] prim_probs = new double[probs.size()];
 	    for (int i = 0; i < prim_probs.length; i++) {
 	    		prim_probs[i] = probs.get(i);                

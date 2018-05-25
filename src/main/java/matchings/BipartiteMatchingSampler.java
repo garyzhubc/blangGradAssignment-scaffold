@@ -145,8 +145,8 @@ public class BipartiteMatchingSampler implements Sampler {
     // Fill this.
 	  
 	  // empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
-	  // partial matching - add or delete one edge (or swap?) [2 3 -1] -> [-1 3 -1] or [-1 2 -1] (or [3 2 -1]?) : add or delete uniformly
-	  // full matching - delete one edge (or swap?) [0 2 1] -> [-1 2 1] (or [0 1 2]?): choose i uniformly and set to -1
+	  // partial matching - add or delete one edge (or swap?) [2 3 -1] -> [-1 3 -1] or [-1 2 -1]: add or delete uniformly
+	  // full matching - delete one edge (or swap?) [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
 	  
 	  // make copy
 	  double log_prob_o = logDensity();
@@ -197,7 +197,6 @@ public class BipartiteMatchingSampler implements Sampler {
 	  double log_prob_n = logDensity();
 
 	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
-//	  System.out.printf("alpha=%f\n",alpha);
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
 		  // if don't accept, restore old connections
