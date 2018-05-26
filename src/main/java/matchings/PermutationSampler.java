@@ -33,7 +33,7 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-	// implementation of locally balanced proposal in discrete spaces: https://arxiv.org/abs/1711.07424
+	// implementation of locally balanced informed proposals: https://arxiv.org/abs/1711.07424
 	// propose kernel: K(x,y) = 1_{B(x)}(y)
 	// informed correction: sqrt(P(x))
 	
