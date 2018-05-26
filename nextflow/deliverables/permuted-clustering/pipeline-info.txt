@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Thu May 24 15:38:38 PDT 2018
-runName: lonely_poisson
+start: Sat May 26 10:31:30 PDT 2018
+runName: lethal_lovelace
 nextflow.version: 0.29.1
