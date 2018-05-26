@@ -46,7 +46,7 @@ public class BipartiteMatchingSampler implements Sampler {
 	  double log_prob_otn,log_prob_nto;
 	  int i,j,l,q,s;
 	  
-	  // propose and move
+	  // propose
 	  if (k!=0) {
 		  i = rand.nextInt(k*k+m);
 		  if (i<=m-1) {
