@@ -63,12 +63,7 @@ public class PermutationSampler implements Sampler {
     
     // normalize
     int i = 0;
-    while (i<perms.size()) {
-    		if (perms.get(i).equals(perm)) {
-    			break;
-    		}
-    		i++;
-    }
+    while (i<perms.size()) {if (perms.get(i).equals(perm)) {break;} i++;}
     primprobs = normalize(logprobs);
     double probQji = primprobs[j];
     
@@ -84,16 +79,9 @@ public class PermutationSampler implements Sampler {
   private final class NeighbourhoodSpecifics {
 	    private final List<Permutation> perms;
 	    private final List<Double> logprobs;
-	    public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {
-	        this.perms = first;
-	        this.logprobs = second;
-	    }
-	    public List<Permutation> getPerms() {
-	        return perms;
-	    }
-	    public List<Double> getLogprobs() {
-	        return logprobs;
-	    }
+	    public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {this.perms = first;this.logprobs = second;}
+	    public List<Permutation> getPerms() {return perms;}
+	    public List<Double> getLogprobs() {return logprobs;}
 	}
   
   private NeighbourhoodSpecifics getNeighbourhoodSpecifics() {
@@ -125,20 +113,12 @@ public class PermutationSampler implements Sampler {
   private double[] normalize(List<Double> logprobs) {
 	    List<Double> probs = new ArrayList<Double>();
 	    Double min = Collections.min(logprobs);
-	    for (Double logprob: logprobs) {
-	    		probs.add(Math.exp((logprob-min)/2));
-	    }
+	    for (Double logprob: logprobs) {probs.add(Math.exp((logprob-min)/2));}
 	    double sum = 0;
-	    for (Double prob: probs) {
-	    		sum += prob;
-	    }
-	    for (int i=0;i<probs.size();i++) {
-	    		probs.set(i, new Double(probs.get(i).doubleValue()/sum));
-	    }
+	    for (Double prob: probs) {sum += prob;}
+	    for (int i=0;i<probs.size();i++) {probs.set(i, new Double(probs.get(i).doubleValue()/sum));}
 	    double[] prim_probs = new double[probs.size()];
-	    for (int i = 0; i < prim_probs.length; i++) {
-	    		prim_probs[i] = probs.get(i);                
-	    }
+	    for (int i = 0; i < prim_probs.length; i++) {prim_probs[i] = probs.get(i);}
 	    return prim_probs;
   }
   
