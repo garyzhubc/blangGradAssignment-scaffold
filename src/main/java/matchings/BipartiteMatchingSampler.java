@@ -40,40 +40,33 @@ public class BipartiteMatchingSampler implements Sampler {
 	  List<Integer> conn_o = new ArrayList<Integer>(matching.getConnections());
 	  
 	  // set quantities
-	  List<Integer> conn = matching.getConnections();
-	  List<Integer> fr1 = matching.free1();
-	  List<Integer> fr2 = matching.free2();
 	  int n = matching.componentSize();
 	  int k = matching.free1().size();
 	  int m = n-k;
-	  List<Integer> unfr1 = new ArrayList<Integer>();
-	  for (int p=0;p<n;p++) {
-		  if (conn.get(p)!=-1)
-			  unfr1.add(p);
-	  }
 	  double log_prob_otn,log_prob_nto;
 	  int i,j,l,q,s;
 	  
+	  // propose and move
 	  if (k!=0) {
 		  i = rand.nextInt(k*k+m);
 		  if (i<=m-1) {
-			  j = unfr1.get(i);
-			  conn.set(j,-1);
+			  j = getUnfree1().get(i);
+			  matching.getConnections().set(j,BipartiteMatching.FREE);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
 			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
 		  } else {
 			  i = i-m;
 			  s = i/k;
 			  j = i%k;
-			  l = fr1.get(s);
-			  q = fr2.get(j);
-			  conn.set(l,q);
+			  l = matching.free1().get(s);
+			  q = matching.free2().get(j);
+			  matching.getConnections().set(l,q);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
 			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
 		  }
 	  } else {
 		  i = rand.nextInt(n);
-		  conn.set(i,-1);
+		  matching.getConnections().set(i,BipartiteMatching.FREE);
 		  log_prob_otn = 0; 
 		  log_prob_nto = 0; 
 	  }
@@ -84,9 +77,18 @@ public class BipartiteMatchingSampler implements Sampler {
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
 		  // if don't accept, restore old connections
-		  matching.getConnections().clear();
-		  matching.getConnections().addAll(conn_o);
+		  matching.getConnections().clear();matching.getConnections().addAll(conn_o);
 	  } 
+  }
+  
+  private List<Integer> getUnfree1() {
+	  // get linked vertices in the first component
+	  List<Integer> unfr1 = new ArrayList<Integer>();
+	  for (int p=0;p<matching.componentSize();p++) {
+		  if (matching.getConnections().get(p)!=BipartiteMatching.FREE)
+			  unfr1.add(p);
+	  }
+	  return unfr1;
   }
   
   private double logDensity() {

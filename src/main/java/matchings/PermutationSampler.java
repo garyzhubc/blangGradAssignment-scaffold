@@ -34,7 +34,7 @@ public class PermutationSampler implements Sampler {
   @Override
   public void execute(Random rand) {
     // copy old
-    List<Integer> conn = permutation.getConnections();
+    List<Integer> conn = new ArrayList<Integer>(permutation.getConnections());
     double logprobpi = logDensity();
     
     // get neighbourhood
@@ -75,12 +75,12 @@ public class PermutationSampler implements Sampler {
     // accept-reject
     double alpha = Math.min(1,Math.exp(logprobpj-logprobpi)*probQji/probQij);
     boolean p = rand.nextBernoulli(alpha);
-    
     if (!p) {
     		permutation.getConnections().clear();
     		permutation.getConnections().addAll(conn);
     }  
 }
+  
   private final class NeighbourhoodSpecifics {
 	    private final List<Permutation> perms;
 	    private final List<Double> logprobs;
