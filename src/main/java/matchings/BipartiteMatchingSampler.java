@@ -47,8 +47,9 @@ public class BipartiteMatchingSampler implements Sampler {
 	  int i,l,q;
 	  
 	  // propose
+	  i = rand.nextInt(k*k+m);
 	  if (k!=0) {
-		  i = rand.nextInt(k*k+m);
+		  // uniformly add or remove
 		  if (i<=m-1) {
 			  matching.getConnections().set(getUnfree1().get(i),BipartiteMatching.FREE);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
@@ -61,7 +62,7 @@ public class BipartiteMatchingSampler implements Sampler {
 			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
 		  }
 	  } else {
-		  i = rand.nextInt(n);
+		  // uniformly add
 		  matching.getConnections().set(i,BipartiteMatching.FREE);
 		  log_prob_otn = 0; 
 		  log_prob_nto = 0; 

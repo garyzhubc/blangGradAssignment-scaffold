@@ -33,6 +33,10 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
+	// implementation of locally balanced proposal in discrete spaces: https://arxiv.org/abs/1711.07424
+	// propose kernel: K(x,y) = 1_{B(x)}(y)
+	// informed correction: sqrt(P(x))
+	
     // copy old
     List<Integer> conn = new ArrayList<Integer>(permutation.getConnections());
     double logprobpi = logDensity();
@@ -70,7 +74,7 @@ public class PermutationSampler implements Sampler {
     // accept-reject
     double alpha = Math.min(1,Math.exp(logprobpj-logprobpi)*probQji/probQij);
     boolean p = rand.nextBernoulli(alpha);
-    if (!p) {
+    if (!p) { 
     		permutation.getConnections().clear();
     		permutation.getConnections().addAll(conn);
     }  
@@ -111,6 +115,8 @@ public class PermutationSampler implements Sampler {
   }
   
   private double[] normalize(List<Double> logprobs) {
+	  
+	    // return normalized density
 	    List<Double> probs = new ArrayList<Double>();
 	    Double min = Collections.min(logprobs);
 	    for (Double logprob: logprobs) {probs.add(Math.exp((logprob-min)/2));}
