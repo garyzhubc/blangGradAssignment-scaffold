@@ -81,11 +81,6 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-	// How to start execute?
-    // How to make new sampler, and its tests?
-	  
-//	System.out.println("new iteration");
-    
     // copy old
     List<Integer> conn = permutation.getConnections();
     double logprobpi = logDensity();

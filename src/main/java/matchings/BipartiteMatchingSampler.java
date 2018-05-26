@@ -142,8 +142,6 @@ public class BipartiteMatchingSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-    // Fill this.
-	  
 	  // empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
 	  // partial matching - add or delete one edge (or swap?) [2 3 -1] -> [-1 3 -1] or [-1 2 -1]: add or delete uniformly
 	  // full matching - delete one edge (or swap?) [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
@@ -164,11 +162,9 @@ public class BipartiteMatchingSampler implements Sampler {
 		  if (conn.get(p)!=-1)
 			  unfr1.add(p);
 	  }
-	  
 	  double log_prob_otn,log_prob_nto;
 	  int i,j,l,q,s;
 	  
-	  // simplified version
 	  if (k!=0) {
 		  i = rand.nextInt(k*k+m);
 		  if (i<=m-1) {
@@ -195,7 +191,6 @@ public class BipartiteMatchingSampler implements Sampler {
 	  
 	  // accept or reject
 	  double log_prob_n = logDensity();
-
 	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
