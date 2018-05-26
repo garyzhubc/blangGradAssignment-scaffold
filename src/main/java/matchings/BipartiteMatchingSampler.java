@@ -44,22 +44,18 @@ public class BipartiteMatchingSampler implements Sampler {
 	  int k = matching.free1().size();
 	  int m = n-k;
 	  double log_prob_otn,log_prob_nto;
-	  int i,j,l,q,s;
+	  int i,l,q;
 	  
 	  // propose
 	  if (k!=0) {
 		  i = rand.nextInt(k*k+m);
 		  if (i<=m-1) {
-			  j = getUnfree1().get(i);
-			  matching.getConnections().set(j,BipartiteMatching.FREE);
+			  matching.getConnections().set(getUnfree1().get(i),BipartiteMatching.FREE);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
 			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
 		  } else {
-			  i = i-m;
-			  s = i/k;
-			  j = i%k;
-			  l = matching.free1().get(s);
-			  q = matching.free2().get(j);
+			  l = matching.free1().get((i-m)/k);
+			  q = matching.free2().get((i-m)%k);
 			  matching.getConnections().set(l,q);
 			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
 			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
