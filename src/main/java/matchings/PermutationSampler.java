@@ -33,12 +33,12 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-	/**
-	 * implementation of "Informed proposals for local MCMC in discrete spaces": https://arxiv.org/abs/1711.07424
-	 * propose kernel: K(x,y) = 1_{B(x)}(y)
-	 * informed correction: sqrt(\Pi(x))
-	 */
-	
+  /**
+   * implementation of "Informed proposals for local MCMC in discrete spaces": https://arxiv.org/abs/1711.07424
+   * propose kernel: K(x,y) = 1_{B(x)}(y)
+   * informed correction: sqrt(\Pi(x))
+   */
+  
     // copy old
     List<Integer> conn = new ArrayList<Integer>(permutation.getConnections());
     double logprobpi = logDensity();
@@ -77,67 +77,73 @@ public class PermutationSampler implements Sampler {
     double alpha = Math.min(1,Math.exp(logprobpj-logprobpi)*probQji/probQij);
     boolean p = rand.nextBernoulli(alpha);
     if (!p) { 
-    	  permutation.getConnections().clear();
-    	  permutation.getConnections().addAll(conn);
+      permutation.getConnections().clear();
+      permutation.getConnections().addAll(conn);
     }  
 }
   
   private final class NeighbourhoodSpecifics {
-	  
-	    // neighbourhood info pair
-	    private final List<Permutation> perms;
-	    private final List<Double> logprobs;
-	    public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {this.perms = first;this.logprobs = second;}
-	    public List<Permutation> getPerms() {return perms;}
-	    public List<Double> getLogprobs() {return logprobs;}
-	}
+    
+    // neighbourhood info pair
+    private final List<Permutation> perms;
+    private final List<Double> logprobs;
+    public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {
+    	  this.perms = first;this.logprobs = second;
+    	}
+    public List<Permutation> getPerms() {
+    	  return perms;
+    	}
+    public List<Double> getLogprobs() {
+    	  return logprobs;
+    	}
+  }
   
   private NeighbourhoodSpecifics getNeighbourhoodSpecifics() {
-	    List<Permutation> perms = new ArrayList<Permutation>();
-	    List<Double> logprobs = new ArrayList<Double>();
-	    
-	    // load itself
-	    Permutation self = new Permutation(permutation.componentSize());
-	    self.getConnections().clear();
-	    self.getConnections().addAll(permutation.getConnections());
-	    perms.add(self);
-	    logprobs.add(logDensity());
-	    
-	    // collect neighbors by swap
-	    for (int i=0;i<permutation.componentSize();i++) {
-	    	  for (int j=i+1;j<permutation.componentSize();++j) {
-	    	    Collections.swap(permutation.getConnections(), i, j);
-	    	    Permutation perm = new Permutation(permutation.componentSize());
-	    	    perm.getConnections().clear();
-	    	    perm.getConnections().addAll(permutation.getConnections());
-	    	    perms.add(perm);
-	    	    logprobs.add(new Double(logDensity()));
-	    	    Collections.swap(permutation.getConnections(), i, j);
-	      }
-	    	}
-	    return new NeighbourhoodSpecifics(perms,logprobs);
+    List<Permutation> perms = new ArrayList<Permutation>();
+    List<Double> logprobs = new ArrayList<Double>();
+      
+    // load itself
+    Permutation self = new Permutation(permutation.componentSize());
+    self.getConnections().clear();
+    self.getConnections().addAll(permutation.getConnections());
+    perms.add(self);
+    logprobs.add(logDensity());
+      
+    // collect neighbors by swap
+    for (int i=0;i<permutation.componentSize();i++) {
+      for (int j=i+1;j<permutation.componentSize();++j) {
+        Collections.swap(permutation.getConnections(), i, j);
+        Permutation perm = new Permutation(permutation.componentSize());
+        perm.getConnections().clear();
+        perm.getConnections().addAll(permutation.getConnections());
+        perms.add(perm);
+        logprobs.add(new Double(logDensity()));
+        Collections.swap(permutation.getConnections(), i, j);
+      }
+    }
+    return new NeighbourhoodSpecifics(perms,logprobs);
   }
   
   private double[] normalize(List<Double> logprobs) {
-	  
-	    // normalize density
-	    List<Double> probs = new ArrayList<Double>();
-	    Double min = Collections.min(logprobs);
-	    for (Double logprob: logprobs) {
-	    	  probs.add(Math.exp((logprob-min)/2));
-	    	}
-	    double sum = 0;
-	    for (Double prob: probs) {
-	    	  sum += prob;
-	    	}
-	    for (int i=0;i<probs.size();i++) {
-	    	  probs.set(i, new Double(probs.get(i).doubleValue()/sum));
-	    	}
-	    double[] prim_probs = new double[probs.size()];
-	    for (int i = 0; i < prim_probs.length; i++) {
-	    	  prim_probs[i] = probs.get(i);
-	    	}
-	    return prim_probs;
+    
+    // normalize density
+    List<Double> probs = new ArrayList<Double>();
+    Double min = Collections.min(logprobs);
+    for (Double logprob: logprobs) {
+      probs.add(Math.exp((logprob-min)/2));
+    }
+    double sum = 0;
+    for (Double prob: probs) {
+    	  sum += prob;
+    }
+    for (int i=0;i<probs.size();i++) {
+      probs.set(i, new Double(probs.get(i).doubleValue()/sum));
+    }
+    double[] prim_probs = new double[probs.size()];
+    for (int i = 0; i < prim_probs.length; i++) {
+      prim_probs[i] = probs.get(i);
+    }
+    return prim_probs;
   }
   
   private double logDensity() {
