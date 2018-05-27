@@ -52,23 +52,23 @@ public class BipartiteMatchingSampler implements Sampler {
 	  // propose
 	  i = rand.nextInt(k*k+m);
 	  if (k!=0) {
-		  // uniformly add or remove
-		  if (i<=m-1) {
-			  matching.getConnections().set(getUnfree1().get(i),BipartiteMatching.FREE);
-			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
-			  log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
-		  } else {
-			  l = matching.free1().get((i-m)/k);
-			  q = matching.free2().get((i-m)%k);
-			  matching.getConnections().set(l,q);
-			  log_prob_otn = -Math.log(Math.pow(k,2)+m);
-			  log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
-		  }
+		// uniformly add or remove
+		if (i<=m-1) {
+	      matching.getConnections().set(getUnfree1().get(i),BipartiteMatching.FREE);
+          log_prob_otn = -Math.log(Math.pow(k,2)+m);
+          log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
+		} else {
+          l = matching.free1().get((i-m)/k);
+          q = matching.free2().get((i-m)%k);
+          matching.getConnections().set(l,q);
+          log_prob_otn = -Math.log(Math.pow(k,2)+m);
+          log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
+        }
 	  } else {
-		  // uniformly add
-		  matching.getConnections().set(i,BipartiteMatching.FREE);
-		  log_prob_otn = 0; 
-		  log_prob_nto = 0; 
+          // uniformly add
+          matching.getConnections().set(i,BipartiteMatching.FREE);
+          log_prob_otn = 0; 
+          log_prob_nto = 0; 
 	  }
 	  
 	  // accept or reject
@@ -76,17 +76,18 @@ public class BipartiteMatchingSampler implements Sampler {
 	  double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
 	  boolean d = rand.nextBernoulli(alpha);
 	  if (!d) {
-		  // if don't accept, restore old connections
-		  matching.getConnections().clear();matching.getConnections().addAll(conn_o);
+	    // if don't accept, restore old connections
+        matching.getConnections().clear();matching.getConnections().addAll(conn_o);
 	  } 
   }
   
   private List<Integer> getUnfree1() {
+	  
 	  // get linked vertices in the first component
 	  List<Integer> unfr1 = new ArrayList<Integer>();
 	  for (int p=0;p<matching.componentSize();p++) {
-		  if (matching.getConnections().get(p)!=BipartiteMatching.FREE)
-			  unfr1.add(p);
+	    if (matching.getConnections().get(p)!=BipartiteMatching.FREE)
+	    	  unfr1.add(p);
 	  }
 	  return unfr1;
   }
