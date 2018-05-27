@@ -83,7 +83,7 @@ public class BipartiteMatchingSampler implements Sampler {
   
   private List<Integer> getUnfree1() {  
 
-  // get linked vertices in the first component
+    // get linked vertices in the first component
     List<Integer> unfr1 = new ArrayList<Integer>();
     for (int p=0;p<matching.componentSize();p++) {
       if (matching.getConnections().get(p)!=BipartiteMatching.FREE)
