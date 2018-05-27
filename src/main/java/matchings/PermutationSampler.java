@@ -33,9 +33,11 @@ public class PermutationSampler implements Sampler {
 
   @Override
   public void execute(Random rand) {
-	// implementation of locally balanced informed proposals: https://arxiv.org/abs/1711.07424
-	// propose kernel: K(x,y) = 1_{B(x)}(y)
-	// informed correction: sqrt(P(x))
+	/**
+	 * implementation of "Informed proposals for local MCMC in discrete spaces": https://arxiv.org/abs/1711.07424
+	 * propose kernel: K(x,y) = 1_{B(x)}(y)
+	 * informed correction: sqrt(\Pi(x))
+	 */
 	
     // copy old
     List<Integer> conn = new ArrayList<Integer>(permutation.getConnections());
@@ -81,6 +83,8 @@ public class PermutationSampler implements Sampler {
 }
   
   private final class NeighbourhoodSpecifics {
+	  
+	    // neighbourhood info
 	    private final List<Permutation> perms;
 	    private final List<Double> logprobs;
 	    public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {this.perms = first;this.logprobs = second;}
@@ -116,7 +120,7 @@ public class PermutationSampler implements Sampler {
   
   private double[] normalize(List<Double> logprobs) {
 	  
-	    // return normalized density
+	    // normalize density
 	    List<Double> probs = new ArrayList<Double>();
 	    Double min = Collections.min(logprobs);
 	    for (Double logprob: logprobs) {probs.add(Math.exp((logprob-min)/2));}
