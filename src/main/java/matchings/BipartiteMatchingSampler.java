@@ -47,10 +47,9 @@ public class BipartiteMatchingSampler implements Sampler {
     int k = matching.free1().size();
     int m = n-k;
     double log_prob_otn,log_prob_nto;
-    int i,l,q;
     
     // propose
-    i = rand.nextInt(k*k+m);
+    int i = rand.nextInt(k*k+m);
     if (k!=0) {
       // uniformly add or remove
       if (i<=m-1) {
@@ -58,18 +57,16 @@ public class BipartiteMatchingSampler implements Sampler {
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
       } else {
-        l = matching.free1().get((i-m)/k);
-        q = matching.free2().get((i-m)%k);
-        matching.getConnections().set(l,q);
+        matching.getConnections().set(matching.free1().get((i-m)/k),matching.free2().get((i-m)%k));
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
       }
-  } else {
+    } else {
         // uniformly add
         matching.getConnections().set(i,BipartiteMatching.FREE);
         log_prob_otn = 0; 
         log_prob_nto = 0; 
-  }
+    }
     
     // accept or reject
     double log_prob_n = logDensity();
