@@ -62,10 +62,10 @@ public class BipartiteMatchingSampler implements Sampler {
         log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
       }
     } else {
-        // uniformly add
-        matching.getConnections().set(i,BipartiteMatching.FREE);
-        log_prob_otn = 0; 
-        log_prob_nto = 0; 
+      // uniformly add
+      matching.getConnections().set(i,BipartiteMatching.FREE);
+      log_prob_otn = 0; 
+      log_prob_nto = 0; 
     }
     
     // accept or reject
@@ -75,7 +75,7 @@ public class BipartiteMatchingSampler implements Sampler {
     if (!d) {
         // if don't accept, restore old connections
       matching.getConnections().clear();matching.getConnections().addAll(conn_o);
-  } 
+    } 
   }
   
   private List<Integer> getUnfree1() {  
