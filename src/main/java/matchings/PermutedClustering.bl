@@ -15,7 +15,7 @@ model PermutedClustering {
   }
   random Matrix observations ?: latentMatrix(nGroups, groupSize)
   laws {
-  	// prior
+    // prior
     means.get(0) ~ ContinuousUniform(0,1)
     for (int i : 1..<groupSize) {
       means.get(i) | RealVar mean = means.get(i-1) ~ ContinuousUniform(0+mean,1+mean) 
