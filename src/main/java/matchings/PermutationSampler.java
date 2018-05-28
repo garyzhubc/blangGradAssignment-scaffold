@@ -80,7 +80,7 @@ public class PermutationSampler implements Sampler {
       permutation.getConnections().clear();
       permutation.getConnections().addAll(conn);
     }  
-}
+  }
   
   private final class NeighbourhoodSpecifics {
     
