@@ -24,7 +24,7 @@ model PermutedClustering {
       variances.get(i) ~ Exponential(10)
     }
     for (int i : 0 ..< nGroups) {
-    	  permutations.get(i) ~ UniformPermutation
+    	permutations.get(i) ~ UniformPermutation
     }
     // likelihood
     for (int j : 0 ..< nGroups) {
