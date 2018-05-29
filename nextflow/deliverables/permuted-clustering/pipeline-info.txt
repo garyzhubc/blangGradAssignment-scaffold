@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Mon May 28 22:51:22 PDT 2018
-runName: clever_monod
+start: Mon May 28 23:02:49 PDT 2018
+runName: clever_magritte
 nextflow.version: 0.29.1
