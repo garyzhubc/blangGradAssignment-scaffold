@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Sat May 26 10:31:30 PDT 2018
-runName: lethal_lovelace
+start: Mon May 28 22:51:22 PDT 2018
+runName: clever_monod
 nextflow.version: 0.29.1

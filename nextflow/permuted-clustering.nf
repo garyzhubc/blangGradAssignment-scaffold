@@ -162,6 +162,31 @@ process plotPosterior {
   """
 }
 
+process calculateESS {
+  input:
+    file samples
+  publishDir deliverableDir, mode: 'copy', overwrite: true  
+  """
+  #!/usr/local/bin/Rscript
+  
+  require("mcmcse")
+  
+  trace = read.table("../../../trace.txt",sep='\t',header=TRUE)
+  dur = as.double(substr(trace[5,8],0,4))
+  
+  data <- read.csv("samples/permutations.csv")
+  X = matrix(0,dim(data)[1],5)
+  for (i in 1:as.integer(dim(data)[1]/5)) {
+    for (j in 1:5) {
+      X[i,j] = data[(i-1)*5+j,'value']
+    }
+  }
+  ess = multiESS(X)
+  
+  write(paste("ess_per_sec =",ess/dur),file="../../../deliverables/permuted-clustering/ess_per_sec.txt")
+  """
+}
+
 process summarizePipeline {
   cache false
   
