@@ -1,3 +1,8 @@
 task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	rss	vmem	rchar	wchar
-2	b3/7044ad	6238	summarizePipeline	COMPLETED	0	2018-05-30 01:10:30.209	482ms	157ms	-	-	-	-	-
-1	5d/03b22a	6239	build	FAILED	1	2018-05-30 01:10:30.174	23s	23s	327.1%	572.8 MB	17.2 GB	0	0
+2	8f/a96700	8131	summarizePipeline	COMPLETED	0	2018-05-30 11:18:23.395	258ms	141ms	-	-	-	-	-
+1	31/fc0148	8132	build	COMPLETED	0	2018-05-30 11:18:23.368	28.6s	28s	81.4%	70.3 MB	10.5 GB	0	0
+3	75/0b9a6a	8564	generateData	COMPLETED	0	2018-05-30 11:18:52.007	2s	1s	111.8%	49.9 MB	11.6 GB	0	0
+4	ff/25bc4d	8692	plotData	COMPLETED	0	2018-05-30 11:18:53.984	6.8s	6s	54.1%	105 MB	4.2 GB	0	0
+5	4c/ada89d	8694	runInference	COMPLETED	0	2018-05-30 11:18:53.994	25.8s	25s	107.9%	217.1 MB	11.6 GB	0	0
+6	72/58dc44	9059	calculateESS	COMPLETED	0	2018-05-30 11:19:19.782	2.5s	3s	69.0%	53.6 MB	4.2 GB	0	0
+7	c8/6046ba	9060	plotPosterior	COMPLETED	0	2018-05-30 11:19:19.789	4.1s	4s	75.0%	61.3 MB	4.2 GB	0	0

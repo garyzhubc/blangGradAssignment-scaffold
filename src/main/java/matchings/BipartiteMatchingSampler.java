@@ -75,7 +75,7 @@ public class BipartiteMatchingSampler implements Sampler {
     if (!d) {
         // if don't accept, restore old connections
       matching.getConnections().clear();matching.getConnections().addAll(conn_o);
-    } 
+    }
   }
   
   private List<Integer> getUnfree1() {  

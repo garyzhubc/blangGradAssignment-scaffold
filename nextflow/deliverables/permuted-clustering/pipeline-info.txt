@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Wed May 30 01:12:22 PDT 2018
-runName: elated_magritte
+start: Wed May 30 11:18:22 PDT 2018
+runName: insane_archimedes
 nextflow.version: 0.29.1
