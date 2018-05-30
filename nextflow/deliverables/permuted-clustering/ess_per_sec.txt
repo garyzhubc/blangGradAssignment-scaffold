@@ -1,1 +1,1 @@
-ess_per_sec = 2203.74400235479
+ess_per_sec = NA

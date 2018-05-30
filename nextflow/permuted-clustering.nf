@@ -169,19 +169,41 @@ process calculateESS {
   """
   #!/usr/local/bin/Rscript
   
-  require("mcmcse")
-  
   trace = read.table("../../../trace.txt",sep='\t',header=TRUE)
   dur = as.double(substr(trace[5,8],0,4))
   
   data <- read.csv("samples/permutations.csv")
-  X = matrix(0,dim(data)[1],5)
+  x = matrix(0,dim(data)[1],5)
   for (i in 1:as.integer(dim(data)[1]/5)) {
     for (j in 1:5) {
-      X[i,j] = data[(i-1)*5+j,'value']
+      if (j == 1 && as.integer(data[(i-1)*5+j,'value']) == 2) {
+        x[i] = 1
+      }
     }
   }
-  ess = multiESS(X)
+
+  N = length(x)
+  v_up = sum((x-sum(x)/N)^2)/(N-1)
+
+  I = x[1:sqrt(N)]
+  batch_size = sqrt(N)
+
+  incr = floor(sqrt(N))
+  up_idx = floor(sqrt(N))
+  num_batch = N%/%incr
+  I = rep(0,num_batch)
+
+  i = 1
+  while (i<=num_batch) {
+    x_batch = x[(up_idx-incr+1):up_idx]
+    I[i] = mean(x_batch)
+    up_idx = up_idx + incr
+    i = i + 1
+  }
+
+  M = length(I)
+  v_down = sum((I-sum(I)/M)^2)/(M-1)
+  ess = v_up/v_down*sqrt(N)
   
   write(paste("ess_per_sec =",ess/dur),file="../../../deliverables/permuted-clustering/ess_per_sec.txt")
   """
