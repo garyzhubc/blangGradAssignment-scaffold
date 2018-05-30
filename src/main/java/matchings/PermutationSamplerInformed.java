@@ -18,7 +18,7 @@ import briefj.collections.UnorderedPair;
  * Each time a Permutation is encountered in a Blang model, 
  * this sampler will be instantiated. 
  */
-public class PermutationSampler implements Sampler {
+public class PermutationSamplerInformed implements Sampler {
   /**
    * This field will be populated automatically with the 
    * permutation being sampled. 
