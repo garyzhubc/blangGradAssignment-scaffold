@@ -44,6 +44,18 @@ import java.util.ArrayList
   }
   
   /**
+   * The list of vertices that are engaged (linked) in the first connected 
+   * component.
+   */
+  def List<Integer> engaged1() {
+    val ArrayList<Integer> result = new ArrayList
+    for (int i : 0 ..< componentSize)
+      if (connections.get(i) != FREE)
+        result.add(i)
+    return result
+  }
+  
+  /**
    * The list of vertices that are free (unlinked) in the second connected 
    * component (in an arbitrary but fixed order).
    */

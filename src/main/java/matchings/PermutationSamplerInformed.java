@@ -83,19 +83,19 @@ public class PermutationSamplerInformed implements Sampler {
   }
   
   private final class NeighbourhoodSpecifics {
-    
+        
     // neighbourhood info pair
     private final List<Permutation> perms;
     private final List<Double> logprobs;
     public NeighbourhoodSpecifics(List<Permutation> first, List<Double> second) {
-    	  this.perms = first;this.logprobs = second;
-    	}
+      this.perms = first;this.logprobs = second;
+    }
     public List<Permutation> getPerms() {
-    	  return perms;
-    	}
+      return perms;
+    }
     public List<Double> getLogprobs() {
-    	  return logprobs;
-    	}
+      return logprobs;
+    }
   }
   
   private NeighbourhoodSpecifics getNeighbourhoodSpecifics() {
@@ -134,7 +134,7 @@ public class PermutationSamplerInformed implements Sampler {
     }
     double sum = 0;
     for (Double prob: probs) {
-    	  sum += prob;
+      sum += prob;
     }
     for (int i=0;i<probs.size();i++) {
       probs.set(i, new Double(probs.get(i).doubleValue()/sum));

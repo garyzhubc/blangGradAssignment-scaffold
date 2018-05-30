@@ -1,13 +1,10 @@
 package matchings;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 
-import bayonet.distributions.Multinomial;
 import bayonet.distributions.Random;
+
 import blang.core.LogScaleFactor;
-import blang.distributions.Generators;
 import blang.mcmc.ConnectedFactor;
 import blang.mcmc.SampledVariable;
 import blang.mcmc.Sampler;
@@ -30,22 +27,21 @@ public class BipartiteMatchingSampler implements Sampler {
   @ConnectedFactor List<LogScaleFactor> numericFactors;
 
   @Override
+  /**
+   * implementation of Metropolis-Hasting algorithm with uniform proposals
+   * empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
+   * partial matching - add or delete one edge [2 3 -1] -> [-1 3 -1] or [-1 2 -1]: add or delete uniformly
+   * full matching - delete one edge [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
+   */
   public void execute(Random rand) {
-    /**
-     * implementation of Metropolis-Hasting algorithm with uniform proposals
-     * empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
-     * partial matching - add or delete one edge [2 3 -1] -> [-1 3 -1] or [-1 2 -1]: add or delete uniformly
-     * full matching - delete one edge [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
-     */
-    
   // make copy
     double log_prob_o = logDensity();
-    List<Integer> conn_o = new ArrayList<Integer>(matching.getConnections());
     
     // set quantities
     int n = matching.componentSize();
     int k = matching.free1().size();
     int m = n-k;
+    int j = Integer.MIN_VALUE;
     double log_prob_otn,log_prob_nto;
     
     // propose
@@ -53,7 +49,8 @@ public class BipartiteMatchingSampler implements Sampler {
     if (k!=0) {
       // uniformly add or remove
       if (i<=m-1) {
-        matching.getConnections().set(getUnfree1().get(i),BipartiteMatching.FREE);
+        j = matching.getConnections().get(matching.engaged1().get(i));
+        matching.getConnections().set(matching.engaged1().get(i),BipartiteMatching.FREE);
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
       } else {
@@ -62,7 +59,8 @@ public class BipartiteMatchingSampler implements Sampler {
         log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
       }
     } else {
-      // uniformly add
+      // uniformly remove
+      j = matching.getConnections().get(i);
       matching.getConnections().set(i,BipartiteMatching.FREE);
       log_prob_otn = 0; 
       log_prob_nto = 0; 
@@ -73,20 +71,18 @@ public class BipartiteMatchingSampler implements Sampler {
     double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
     boolean d = rand.nextBernoulli(alpha);
     if (!d) {
-        // if don't accept, restore old connections
-      matching.getConnections().clear();matching.getConnections().addAll(conn_o);
+      
+      // if don't accept, restore old connections
+      if (k!=0) {
+        if (i<=m-1) {
+          matching.getConnections().set(matching.engaged1().get(i),j);
+        } else {
+          matching.getConnections().set(matching.free1().get((i-m)/k),matching.free2().get((i-m)%k));
+        }
+      } else {
+        matching.getConnections().set(i,j);
+      }
     }
-  }
-  
-  private List<Integer> getUnfree1() {  
-
-    // get linked vertices in the first component
-    List<Integer> unfr1 = new ArrayList<Integer>();
-    for (int p=0;p<matching.componentSize();p++) {
-      if (matching.getConnections().get(p)!=BipartiteMatching.FREE)
-        unfr1.add(p);
-    }
-    return unfr1;
   }
   
   private double logDensity() {
