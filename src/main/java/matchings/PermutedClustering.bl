@@ -29,11 +29,11 @@ model PermutedClustering {
     // likelihood
     for (int j : 0 ..< nGroups) {
       for (int i : 0 ..< groupSize){
-    		observations.getRealVar(j, i) | 
-    		Permutation perm = permutations.get(j),
-    		means, 
-    		variances, i
-    		~ Normal(means.get(perm.getConnections().get(i)),variances.get(perm.getConnections().get(i)))
+        observations.getRealVar(j, i) | 
+    	  Permutation perm = permutations.get(j),
+    	  means, 
+    	  variances, i
+        ~ Normal(means.get(perm.getConnections().get(i)),variances.get(perm.getConnections().get(i)))
       }
     }
   }
