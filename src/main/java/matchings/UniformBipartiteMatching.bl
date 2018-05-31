@@ -2,8 +2,8 @@ package matchings
 
 import matchings.BipartiteMatching
 
-model UniformBipartiteMatching {
-  random BipartiteMatching matching 
+model UniformBipartiteMatching { 
+  random BipartiteMatching matching ?: new BipartiteMatching(4)
   
   laws {
     logf(matching) {

@@ -1,6 +1,7 @@
 package matchings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,13 +33,16 @@ public class PermutationSamplerInformed implements Sampler {
   @ConnectedFactor List<LogScaleFactor> numericFactors;
 
   @Override
-  public void execute(Random rand) {
   /**
    * implementation of the paper by G. Zanella, 2017. Informed proposals for local MCMC in discrete spaces. https://arxiv.org/abs/1711.07424.
    * propose kernel: K(x,y) = 1_{B(x)}(y)
    * informed correction: sqrt(\Pi(x))
    */
-  
+  public void execute(Random rand) {
+    System.out.println("new iteration");
+    System.out.print("logDensity=");
+    System.out.println(logDensity());
+    
     // copy old
     List<Integer> conn = new ArrayList<Integer>(permutation.getConnections());
     double logprobpi = logDensity();
@@ -49,7 +53,13 @@ public class PermutationSamplerInformed implements Sampler {
     List<Double> logprobs = nbs.getLogprobs();
     
     // normalize
+    System.out.print("logprobs=");
+    System.out.println(logprobs);
+    
     double[] primprobs = normalize(logprobs);
+    
+    System.out.print("primprobs=");
+    System.out.println(Arrays.toString(primprobs));
     
     // sample
     int j = rand.nextCategorical(primprobs);
@@ -69,7 +79,12 @@ public class PermutationSamplerInformed implements Sampler {
     
     // normalize
     int i = 0;
-    while (i<perms.size()) {if (perms.get(i).equals(perm)) {break;} i++;}
+    while (i<perms.size()) {
+      if (perms.get(i).equals(perm)) {
+        break;
+      }  
+      i++;
+    }
     primprobs = normalize(logprobs);
     double probQji = primprobs[j];
     
@@ -79,7 +94,9 @@ public class PermutationSamplerInformed implements Sampler {
     if (!p) { 
       permutation.getConnections().clear();
       permutation.getConnections().addAll(conn);
-    }  
+    }
+    
+    System.out.println("iteration ends");
   }
   
   private final class NeighbourhoodSpecifics {
@@ -107,16 +124,21 @@ public class PermutationSamplerInformed implements Sampler {
     self.getConnections().clear();
     self.getConnections().addAll(permutation.getConnections());
     perms.add(self);
-    logprobs.add(logDensity());
+    System.out.print("logDensity=");
+    System.out.println(this.logDensity());
+    logprobs.add(new Double(logDensity()));
       
     // collect neighbors by swap
     for (int i=0;i<permutation.componentSize();i++) {
+      System.out.println(i);
       for (int j=i+1;j<permutation.componentSize();++j) {
+        System.out.println(j);
         Collections.swap(permutation.getConnections(), i, j);
         Permutation perm = new Permutation(permutation.componentSize());
         perm.getConnections().clear();
         perm.getConnections().addAll(permutation.getConnections());
         perms.add(perm);
+        System.out.println(logDensity());
         logprobs.add(new Double(logDensity()));
         Collections.swap(permutation.getConnections(), i, j);
       }
@@ -124,7 +146,7 @@ public class PermutationSamplerInformed implements Sampler {
     return new NeighbourhoodSpecifics(perms,logprobs);
   }
   
-  private double[] normalize(List<Double> logprobs) {
+  public double[] normalize(List<Double> logprobs) {
     
     // normalize density
     List<Double> probs = new ArrayList<Double>();

@@ -5,6 +5,8 @@ import blang.mcmc.Samplers
 import java.util.Random
 import static java.util.Collections.sort
 import static java.util.Collections.shuffle
+import blang.inits.DesignatedConstructor
+import blang.inits.ConstructorArg
 
 /**
  * A permutation or equivalently, a bipartite perfect 
@@ -17,8 +19,12 @@ import static java.util.Collections.shuffle
  * are automatically implemented, as well as other nice defaults 
  * (see the xtend documentation for details). 
  */
-@Samplers(PermutationSampler,PermutationSamplerInformed)
+@Samplers(PermutationSampler)
 @Data class Permutation extends MatchingBase {
+  @DesignatedConstructor
+  new (@ConstructorArg("component") int componentSize) { 
+    super(componentSize)
+  }
   /**
    * Sample an independent uniform permutation in place.
    */
