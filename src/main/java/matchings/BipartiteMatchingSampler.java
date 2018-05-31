@@ -34,7 +34,7 @@ public class BipartiteMatchingSampler implements Sampler {
    * full matching - delete one edge [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
    */
   public void execute(Random rand) {
-  // make copy
+    // make copy
     double log_prob_o = logDensity();
     
     // set quantities
@@ -42,6 +42,7 @@ public class BipartiteMatchingSampler implements Sampler {
     int k = matching.free1().size();
     int m = n-k;
     int j = Integer.MIN_VALUE;
+    int l = Integer.MIN_VALUE;
     double log_prob_otn,log_prob_nto;
     
     // propose
@@ -49,11 +50,14 @@ public class BipartiteMatchingSampler implements Sampler {
     if (k!=0) {
       // uniformly add or remove
       if (i<=m-1) {
-        j = matching.getConnections().get(matching.engaged1().get(i));
-        matching.getConnections().set(matching.engaged1().get(i),BipartiteMatching.FREE);
+        // remove
+        l = matching.engaged1().get(i);
+        j = matching.getConnections().get(l);
+        matching.getConnections().set(l,BipartiteMatching.FREE);
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
       } else {
+        // add
         matching.getConnections().set(matching.free1().get((i-m)/k),matching.free2().get((i-m)%k));
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
@@ -75,7 +79,7 @@ public class BipartiteMatchingSampler implements Sampler {
       // if don't accept, restore old connections
       if (k!=0) {
         if (i<=m-1) {
-          matching.getConnections().set(matching.engaged1().get(i),j);
+          matching.getConnections().set(l,j);
         } else {
           matching.getConnections().set(matching.free1().get((i-m)/k),matching.free2().get((i-m)%k));
         }
