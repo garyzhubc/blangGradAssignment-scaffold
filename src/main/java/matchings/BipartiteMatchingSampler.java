@@ -38,11 +38,8 @@ public class BipartiteMatchingSampler implements Sampler {
     double log_prob_o = logDensity();
     
     // set quantities
-    int n = matching.componentSize();
-    int k = matching.free1().size();
-    int m = n-k;
-    int j = Integer.MIN_VALUE;
-    int l = Integer.MIN_VALUE;
+    int n = matching.componentSize();int k = matching.free1().size();int m = n-k;
+    int j= Integer.MIN_VALUE;int l = Integer.MIN_VALUE;
     double log_prob_otn,log_prob_nto;
     
     // propose
@@ -50,9 +47,10 @@ public class BipartiteMatchingSampler implements Sampler {
     if (k!=0) {
       // uniformly add or remove
       if (i<=m-1) {
-        // remove
+        // save action
         l = matching.engaged1().get(i);
         j = matching.getConnections().get(l);
+        // add
         matching.getConnections().set(l,BipartiteMatching.FREE);
         log_prob_otn = -Math.log(Math.pow(k,2)+m);
         log_prob_nto = -Math.log(Math.pow(k+1,2)+m-1); 
@@ -63,8 +61,9 @@ public class BipartiteMatchingSampler implements Sampler {
         log_prob_nto = -Math.log(Math.pow(k-1,2)+m+1); 
       }
     } else {
-      // uniformly remove
+      // save action
       j = matching.getConnections().get(i);
+      // uniformly remove
       matching.getConnections().set(i,BipartiteMatching.FREE);
       log_prob_otn = 0; 
       log_prob_nto = 0; 
@@ -75,12 +74,11 @@ public class BipartiteMatchingSampler implements Sampler {
     double alpha = Math.min(1,Math.exp(log_prob_n-log_prob_o+log_prob_nto-log_prob_otn));
     boolean d = rand.nextBernoulli(alpha);
     if (!d) {
-      
       // if don't accept, restore old connections
       if (k!=0) {
-        if (i<=m-1) {
-          matching.getConnections().set(l,j);
-        } else {
+        if (i<=m-1) { 
+          matching.getConnections().set(l,j); 
+        } else { 
           matching.getConnections().set(matching.free1().get((i-m)/k),matching.free2().get((i-m)%k));
         }
       } else {
