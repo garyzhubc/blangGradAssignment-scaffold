@@ -35,8 +35,8 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
   @Override
   /**
    * Implementation of Informed proposals for local MCMC in discrete spaces. https://arxiv.org/abs/1711.07424.
-   * propose kernel: K(x,y) = 1_{B(x)}(y)
-   * informed correction: sqrt(\Pi(x))
+   * propose kernel: K(x,y) = 1_{B(x)\x}(y)
+   * informed correction: \sqrt(\Pi(x))
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();

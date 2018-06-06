@@ -36,7 +36,6 @@ public class PermutationSampler implements Sampler {
     /* startRem // Fill this. */
     UnorderedPair<Integer, Integer> pair = Generators.distinctPair(rand, permutation.componentSize());
     double logDensityBefore = logDensity();
-    System.out.println(logDensity());
     Collections.swap(permutation.getConnections(), pair.getFirst(), pair.getSecond());
     double logDensityAfter = logDensity();
     double acceptPr = Math.min(1.0, Math.exp(logDensityAfter - logDensityBefore)); 
