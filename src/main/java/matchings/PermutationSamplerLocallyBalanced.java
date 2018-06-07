@@ -30,7 +30,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
 
   @Override
   /**
-   * Implementation of Informed proposals for local MCMC in discrete spaces. https://arxiv.org/abs/1711.07424.
+   * Implementation of Locally Balanced Proposal by G. Zanella 2017.
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();
