@@ -30,7 +30,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
 
   @Override
   /**
-   * Implementation of Locally Balanced Proposal by G. Zanella 2017.
+   * Implementation of Locally-balanced Proposal by G. Zanella 2017.
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();
