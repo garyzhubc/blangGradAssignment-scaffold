@@ -4,6 +4,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 groupSize = 10
+max_groupSize = 20
 
 process build {
   cache false
@@ -49,17 +50,17 @@ process generateData {
     file 'generated' into data
     
   """
-  for ((i=0;i<10;i++)); do
-    set -e
+  set -e
+  for i in {$groupSize..$max_groupSize}; do
     java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
       --experimentConfigs.managedExecutionFolder false \
       --experimentConfigs.saveStandardStreams false \
       --experimentConfigs.recordExecutionInfo false \
       --experimentConfigs.recordGitInfo false \
       --model.nGroups $nGroups \
-      --model.groupSize $(($groupSize+i)) \
+      --model.groupSize $i \
       --engine Forward
-    mv samples generated$(($groupSize+i))
+    mv samples generated$i
   done
   """
 }
@@ -114,9 +115,9 @@ process runInference {
   output:
     file 'samples' into samples
   """
-  for ((i=0;i<10;i++)); do
-    set -e
-    tail -n +2 generated$(($groupSize+i))/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
+  set -e
+  for i in {$groupSize..$total_increment}; do 
+    tail -n +2 generated$i/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
     java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
       --initRandom 123 \
       --experimentConfigs.managedExecutionFolder false \
@@ -124,7 +125,7 @@ process runInference {
       --experimentConfigs.recordExecutionInfo false \
       --experimentConfigs.recordGitInfo false \
       --model.nGroups $nGroups \
-      --model.groupSize $groupSize \
+      --model.groupSize $i \
       --model.observations.file data.csv \
       --engine PT \
       --engine.nScans 2_000 \
