@@ -51,9 +51,8 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
     }
     int k = rand.nextCategorical(probs);
     double Qij = probs[k];
-    int l = (int)((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*k))/(-2));
+    int l = (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*k))/(-2));
     Collections.swap(permutation.getConnections(),l,k-(2*permutation.componentSize()-l-1)*l/2+l+1);
-    log_probs_halved[0] = logDensity()/2;
     idx = 0;
     for (int i=0;i<permutation.componentSize();i++) {
       for (int j=i+1;j<permutation.componentSize();++j) {
