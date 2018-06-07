@@ -1,11 +1,7 @@
 package matchings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import bayonet.distributions.Random;
 import bayonet.math.NumericalUtils;
@@ -41,7 +37,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
   public void execute(Random rand) {
     double log_Pi = logDensity();
     double[] log_probs_halved = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
-    int idx=0;
+    int idx = 0;
     int[][] idx_swapped = new int[(permutation.componentSize()*(permutation.componentSize()-1))/2][2];
     for (int i=0;i<permutation.componentSize();i++) {
       for (int j=i+1;j<permutation.componentSize();++j) {
@@ -53,7 +49,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
         idx++;
       }
     }
-    double sum = bayonet.math.NumericalUtils.logAdd(log_probs_halved);
+    double sum = NumericalUtils.logAdd(log_probs_halved);
     double[] probs = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
     for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) {
       probs[i] = Math.exp(log_probs_halved[i]-sum);
@@ -71,7 +67,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
         idx++;
       }
     }
-    sum = bayonet.math.NumericalUtils.logAdd(log_probs_halved);
+    sum = NumericalUtils.logAdd(log_probs_halved);
     double Qji = Math.exp(log_probs_halved[k]-sum);
     if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi)*Qji/Qij))) {
       Collections.swap(permutation.getConnections(),idx_swapped[k][0],idx_swapped[k][1]); 

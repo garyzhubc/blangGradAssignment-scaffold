@@ -2,8 +2,8 @@
 
 deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
-nGroups = 20
-groupSize = 5
+nGroups = 2
+groupSize = 20
 
 process build {
   cache false
@@ -169,17 +169,26 @@ process calculateESS {
   """
   #!/usr/local/bin/Rscript
   
+  nGroups = $nGroups
+  groupSize = $groupSize
+
   trace = read.table("../../../trace.txt",sep='\t',header=TRUE)
-  dur = as.double(substr(trace[5,8],0,4))
-  
   data <- read.csv("samples/permutations.csv")
-  x = matrix(0,dim(data)[1],5)
-  for (i in 1:as.integer(dim(data)[1]/5)) {
-    for (j in 1:5) {
-      if (j == 1 && as.integer(data[(i-1)*5+j,'value']) == 2) {
+
+  # trace = read.table("/Users/garyzhu/Desktop/blang/workspace/blangGradAssignment-scaffold/nextflow/trace.txt",sep='\t',header=TRUE)
+  # data <- read.csv("/Users/garyzhu/Desktop/blang/workspace/blangGradAssignment-scaffold/nextflow/work/5b/d87264236de732af02288cce3b3f8e/samples/permutations.csv")
+
+  dur = as.double(substr(trace[5,8],0,4))
+
+  x = rep(0,as.integer(dim(data)[1]/(groupSize*nGroups)))
+  k = 0
+  for (i in 1:as.integer(dim(data)[1]/(groupSize*nGroups))) {
+    for (j in 1:groupSize) {
+      if (j == 2 & as.integer(data[k+j,'value']) == 1) {
         x[i] = 1
       }
     }
+    k = k + groupSize*nGroups
   }
 
   N = length(x)
@@ -200,12 +209,15 @@ process calculateESS {
     up_idx = up_idx + incr
     i = i + 1
   }
-
+  
   M = length(I)
   v_down = sum((I-sum(I)/M)^2)/(M-1)
   ess = v_up/v_down*sqrt(N)
-  
+  ess_per_sec = ess/dur
+
   write(paste("ess_per_sec =",ess/dur),file="../../../deliverables/permuted-clustering/ess_per_sec.txt")
+
+  # write(paste("ess_per_sec =",ess_per_sec),file="/Users/garyzhu/Desktop/ess_per_sec.txt")
   """
 }
 

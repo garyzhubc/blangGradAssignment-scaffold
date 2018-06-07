@@ -1,1 +1,1 @@
-ess_per_sec = 96.4140946352887
+ess_per_sec = NaN
