@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Wed Jun 06 16:07:53 PDT 2018
-runName: deadly_waddington
+start: Thu Jun 07 11:10:12 PDT 2018
+runName: voluminous_ritchie
 nextflow.version: 0.29.1

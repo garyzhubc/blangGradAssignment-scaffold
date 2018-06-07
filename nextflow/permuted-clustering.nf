@@ -2,8 +2,8 @@
 
 deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
-nGroups = 2
-groupSize = 20
+nGroups = 20
+groupSize = 3
 
 process build {
   cache false
@@ -169,9 +169,14 @@ process calculateESS {
   """
   #!/usr/local/bin/Rscript
   
+  # use this line to run
+  # rm -rf work | rm trace.txt | nextflow run ./permuted-clustering.nf -with-trace
+    
   nGroups = $nGroups
   groupSize = $groupSize
-
+  from_vertex = 0
+  to_vertex = 0
+  
   trace = read.table("../../../trace.txt",sep='\t',header=TRUE)
   data <- read.csv("samples/permutations.csv")
 
@@ -184,7 +189,7 @@ process calculateESS {
   k = 0
   for (i in 1:as.integer(dim(data)[1]/(groupSize*nGroups))) {
     for (j in 1:groupSize) {
-      if (j == 2 & as.integer(data[k+j,'value']) == 1) {
+      if (j == from_vertex+1 & as.integer(data[k+j,'value']) == to_vertex) {
         x[i] = 1
       }
     }
