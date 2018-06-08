@@ -73,6 +73,7 @@ process runInference {
     file jars_hash2
   output:
     file "generated$i" into samples
+    file "runtime$i" into runtime
 
   """
   set -e 
@@ -91,13 +92,15 @@ process runInference {
     --engine.nThreads MAX \
     --engine.nChains 8
   mv samples generated$i
+  mv monitoring runtime$i
   """   
 }
 
 process calculateESS {
   input:
     each i from minGroupSize..maxGroupSize
-    file samples
+    file samples.collect()
+    file runtime.collect()
   publishDir deliverableDir, mode: 'copy', overwrite: true  
 
   """
@@ -108,10 +111,11 @@ process calculateESS {
   from_vertex = 0
   to_vertex = 0
   
-  trace = read.table("samples${i}/executionInfo.txt",sep='\t',header=TRUE)
+  rt_sum = read.table("runtime${i}/runningTimeSummary.tsv",sep='\t',header=TRUE)
+  dur = rt_sum[2,'V2']*0.001
+
   data <- read.csv("samples${i}/permutations.csv")
 
-  dur = as.double(substr(trace[5,8],0,4))
   x = rep(0,as.integer(dim(data)[1]/(groupSize*nGroups)))
   k = 0
   for (i in 1:as.integer(dim(data)[1]/(groupSize*nGroups))) {
