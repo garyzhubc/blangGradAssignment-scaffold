@@ -49,7 +49,7 @@ process generateData {
     file jars_hash1
   output:
     file "generated$i" into data
-
+    
   """
   set -e
   java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
@@ -74,7 +74,6 @@ process runInference {
   output:
     file "generated$i" into samples
     file "runtime$i" into runtime
-
   """
   set -e 
   tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
@@ -99,8 +98,8 @@ process runInference {
 process calculateESS {
   input:
     each i from minGroupSize..maxGroupSize
-    file samples.collect()
-    file runtime.collect()
+    file samples from samples.collect()
+    file runtime from runtime.collect()
   publishDir deliverableDir, mode: 'copy', overwrite: true  
 
   """
@@ -148,7 +147,7 @@ process calculateESS {
   v_down = sum((I-sum(I)/M)^2)/(M-1)
   ess = v_up/v_down*sqrt(N)
   ess_per_sec = ess/dur
-
-  write(paste("ess_per_sec =",ess/dur),file="../../../deliverables/permuted-clustering/ess_per_sec$i.txt")
+  
+  cat(paste("ess_per_sec$i\t",ess_per_sec),file="../../../deliverables/permuted-clustering/ess_per_sec$i.txt",sep="\n",append=TRUE)
   """
 }
