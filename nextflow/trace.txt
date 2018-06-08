@@ -1,3 +1,5 @@
 task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	rss	vmem	rchar	wchar
-2	2d/f369f5	31570	summarizePipeline	COMPLETED	0	2018-06-07 15:53:52.936	335ms	128ms	-	-	-	-	-
-1	97/7d54f7	31571	build	COMPLETED	0	2018-06-07 15:53:52.895	7.5s	7s	94.9%	38.5 MB	10.5 GB	0	0
+1	29/2a1a68	11980	build	COMPLETED	0	2018-06-08 12:04:06.867	7.5s	7s	113.7%	42.1 MB	10.5 GB	0	0
+3	05/d5ccf6	12246	generateData (2)	FAILED	0	2018-06-08 12:04:14.599	3.5s	3s	42.6%	33.2 MB	11.6 GB	0	0
+4	21/c08561	12242	generateData (3)	ABORTED	-	2018-06-08 12:04:14.569	-	-	-	-	-	-	-
+2	4f/1d98e1	12243	generateData (1)	ABORTED	-	2018-06-08 12:04:14.583	-	-	-	-	-	-	-

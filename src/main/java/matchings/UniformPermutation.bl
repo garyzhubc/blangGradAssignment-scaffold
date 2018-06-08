@@ -4,7 +4,7 @@ package matchings
  * The uniform distribution over permutations. 
  */
 model UniformPermutation {
-  random Permutation permutation ?: new Permutation(1000)
+  random Permutation permutation ?: new Permutation(5)
   
   laws {
     logf(permutation) {
