@@ -1,4 +1,0 @@
-scriptName: permuted-clustering.nf
-start: Fri Jun 08 11:45:23 PDT 2018
-runName: big_poitras
-nextflow.version: 0.29.1

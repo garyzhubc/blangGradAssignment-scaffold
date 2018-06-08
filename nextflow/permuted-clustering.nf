@@ -107,13 +107,13 @@ process calculateESS {
   
   nGroups = $nGroups
   groupSize = $i
-  from_vertex = 0
-  to_vertex = 0
+  from_vertex = 1
+  to_vertex = 2
   
   rt_sum = read.table("runtime${i}/runningTimeSummary.tsv",sep='\t',header=TRUE)
   dur = rt_sum[2,'V2']*0.001
 
-  data <- read.csv("samples${i}/permutations.csv")
+  data <- read.csv("generated${i}/permutations.csv")
 
   x = rep(0,as.integer(dim(data)[1]/(groupSize*nGroups)))
   k = 0
@@ -148,6 +148,6 @@ process calculateESS {
   ess = v_up/v_down*sqrt(N)
   ess_per_sec = ess/dur
   
-  cat(paste("ess_per_sec$i\t",ess_per_sec),file="../../../deliverables/permuted-clustering/ess_per_sec$i.txt",sep="\n",append=TRUE)
+  cat(paste("ess_per_sec",ess_per_sec),file="../../../deliverables/permuted-clustering/ess_per_sec.txt",sep="\t",append=TRUE)
   """
 }
