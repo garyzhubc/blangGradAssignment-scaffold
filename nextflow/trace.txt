@@ -1,5 +1,8 @@
 task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	rss	vmem	rchar	wchar
-1	29/2a1a68	11980	build	COMPLETED	0	2018-06-08 12:04:06.867	7.5s	7s	113.7%	42.1 MB	10.5 GB	0	0
-3	05/d5ccf6	12246	generateData (2)	FAILED	0	2018-06-08 12:04:14.599	3.5s	3s	42.6%	33.2 MB	11.6 GB	0	0
-4	21/c08561	12242	generateData (3)	ABORTED	-	2018-06-08 12:04:14.569	-	-	-	-	-	-	-
-2	4f/1d98e1	12243	generateData (1)	ABORTED	-	2018-06-08 12:04:14.583	-	-	-	-	-	-	-
+1	29/2a1a68	13365	build	COMPLETED	0	2018-06-08 13:30:08.561	7.2s	7s	104.9%	42.5 MB	10.5 GB	0	0
+2	4f/1d98e1	13641	generateData (1)	COMPLETED	0	2018-06-08 13:30:15.916	3.5s	3s	39.6%	30.4 MB	11.6 GB	0	0
+3	05/d5ccf6	13627	generateData (2)	COMPLETED	0	2018-06-08 13:30:15.858	3.6s	3s	26.7%	27.4 MB	11.6 GB	0	0
+4	21/c08561	13629	generateData (3)	COMPLETED	0	2018-06-08 13:30:15.878	3.6s	3s	47.9%	30.9 MB	11.6 GB	0	0
+5	af/9a5e06	14003	runInference (1)	COMPLETED	0	2018-06-08 13:30:19.508	18.4s	18s	57.3%	220.8 MB	11.6 GB	0	0
+7	b3/6b8816	13999	runInference (3)	ABORTED	-	2018-06-08 13:30:19.483	-	-	-	-	-	-	-
+6	3b/8854cd	14000	runInference (2)	ABORTED	-	2018-06-08 13:30:19.495	-	-	-	-	-	-	-

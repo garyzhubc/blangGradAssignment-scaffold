@@ -48,7 +48,7 @@ process generateData {
     file classpath1
     file jars_hash1
   output:
-    file 'generated$i' into data
+    file "generated$i" into data
 
   """
   set -e
@@ -72,7 +72,7 @@ process runInference {
     file classpath2
     file jars_hash2
   output:
-    file 'generated$i' into samples
+    file "generated$i" into samples
 
   """
   set -e 
@@ -90,7 +90,6 @@ process runInference {
     --engine.nScans 2_000 \
     --engine.nThreads MAX \
     --engine.nChains 8
-  done
   mv samples generated$i
   """   
 }
