@@ -36,6 +36,7 @@ jars_hash.into {
   jars_hash1
   jars_hash2
 }
+
 classpath.into {
   classpath1
   classpath2
@@ -95,59 +96,4 @@ process runInference {
   """   
 }
 
-process calculateESS {
-  input:
-    each i from minGroupSize..maxGroupSize
-    file samples from samples.collect()
-    file runtime from runtime.collect()
-  publishDir deliverableDir, mode: 'copy', overwrite: true  
 
-  """
-  #!/usr/local/bin/Rscript
-  
-  nGroups = $nGroups
-  groupSize = $i
-  from_vertex = 1
-  to_vertex = 2
-  
-  rt_sum = read.table("runtime${i}/runningTimeSummary.tsv",sep='\t',header=TRUE)
-  dur = rt_sum[2,'V2']*0.001
-
-  data <- read.csv("generated${i}/permutations.csv")
-
-  x = rep(0,as.integer(dim(data)[1]/(groupSize*nGroups)))
-  k = 0
-  for (i in 1:as.integer(dim(data)[1]/(groupSize*nGroups))) {
-    for (j in 1:groupSize) {
-      if (j == from_vertex+1 & as.integer(data[k+j,'value']) == to_vertex) {
-        x[i] = 1
-      }
-    }
-    k = k + groupSize*nGroups
-  }
-
-  N = length(x)
-  v_up = sum((x-sum(x)/N)^2)/(N-1)
-  I = x[1:sqrt(N)]
-  batch_size = sqrt(N)
-  incr = floor(sqrt(N))
-  up_idx = floor(sqrt(N))
-  num_batch = N%/%incr
-  I = rep(0,num_batch)
-  i = 1
-
-  while (i<=num_batch) {
-    x_batch = x[(up_idx-incr+1):up_idx]
-    I[i] = mean(x_batch)
-    up_idx = up_idx + incr
-    i = i + 1
-  }
-  
-  M = length(I)
-  v_down = sum((I-sum(I)/M)^2)/(M-1)
-  ess = v_up/v_down*sqrt(N)
-  ess_per_sec = ess/dur
-  
-  cat(paste("ess_per_sec",ess_per_sec),file="../../../deliverables/permuted-clustering/ess_per_sec.txt",sep="\t",append=TRUE)
-  """
-}

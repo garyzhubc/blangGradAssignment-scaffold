@@ -1,10 +1,7 @@
 package matchings;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import bayonet.distributions.Random;
 import blang.core.LogScaleFactor;
