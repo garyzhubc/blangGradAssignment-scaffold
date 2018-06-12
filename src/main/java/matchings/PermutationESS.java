@@ -4,11 +4,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import bayonet.math.EffectiveSampleSize;
 import blang.inits.Arg;
-import blang.inits.DefaultValue;
 import blang.inits.experiments.Experiment;
 import briefj.BriefIO;
 
@@ -29,31 +27,21 @@ public class PermutationESS extends Experiment
   @Arg
   double runtime;
   
-  @Arg 
-  Optional<String> field = Optional.empty();
-  
-  @Arg @DefaultValue("1")
-  int moment        = 1;
-
   @Override
   public void run() 
   {
-    List<Double> samples = new ArrayList<>();
-    int i = 0;
-    for (Map<String,String> line : BriefIO.readLines(csvFile).indexCSV().skip(0)) {
-      if (i%(groupSize*nGroups)==0) {
-        if (Integer.parseInt(line.get("value").trim())==0) {
-          samples.add(1.);
-        } else {
-          samples.add(0.);
+    for (int i=0;i<groupSize;i++) {
+      for (int j=0;j<groupSize;j++) {
+        List<Double> samples = new ArrayList<>();
+        int k = 0;
+        for (Map<String,String> line : BriefIO.readLines(csvFile).indexCSV().skip(0)) {
+          if (k%(groupSize*nGroups)==i) 
+            samples.add(Integer.parseInt(line.get("value").trim())==j ? 1. : 0.);
+          k++;
         }
+        System.out.println(EffectiveSampleSize.ess(samples)/runtime);
       }
-      i++;
     }
-    
-    System.out.println(moment == 1 ?
-      EffectiveSampleSize.ess(samples)/runtime :
-      EffectiveSampleSize.ess(samples, x -> Math.pow(x, moment))/runtime);
   }
 
   public static void main(String [] args) 

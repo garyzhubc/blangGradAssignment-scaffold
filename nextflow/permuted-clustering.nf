@@ -4,7 +4,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-maxGroupSize = 5
+maxGroupSize = 10
 
 process build {
   cache false
@@ -72,8 +72,7 @@ process runInference {
     file classpath2
     file jars_hash2
   output:
-    file "samples/permutations${i}.csv" into permutations
-    file "monitoring/runningTimeSummary${i}.tsv" into runningTimeSummary
+    file "results/latest/executionInfo/ess_per_sec${i}.txt" into ess_per_sec
   """
   set -e 
   tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
@@ -89,29 +88,24 @@ process runInference {
     --engine PT \
     --engine.nScans 2_000 \
     --engine.nThreads MAX \
-    --engine.nChains 8
-  mv samples/permutations.csv samples/permutations${i}.csv
-  mv monitoring/runningTimeSummary.tsv monitoring/runningTimeSummary${i}.tsv
+    --engine.nChains 1
+  java -cp `cat classpath` -Xmx2g matchings.PermutationESS \
+    --csvFile samples/permutations.csv \
+    --groupSize $i \
+    --nGroups $nGroups \
+    --runtime \$(awk -F '\t' '\$1 == "samplingTime_ms" {print \$NF/1000}' monitoring/runningTimeSummary.tsv)
+  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_sec${i}.txt
   """   
 }
 
-process calculateESS {
+process aggregateESS {
   cache 'deep'
   input:
     each i from minGroupSize..maxGroupSize
-    file permutations from permutations.collect()
-    file runningTimeSummary from runningTimeSummary.collect()
-    file classpath3
-  output:
-    file "executionInfo/ess_per_sec${i}.txt" into ess_per_sec
+    file ess_per_sec from ess_per_sec.collect()
+  publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  set -e
-  java -cp `cat classpath` -Xmx2g matchings.PermutationESS \
-    --csvFile permutations${i}.csv \
-    --groupSize $i \
-    --nGroups $nGroups \
-    --runtime 1
-  mv executionInfo/stdout.txt executionInfo/ess_per_sec${i}.txt
+  #!/usr/local/bin/Rscript
+  
   """
-} 
-
+}
