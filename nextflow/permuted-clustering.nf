@@ -95,5 +95,3 @@ process runInference {
   mv monitoring runtime$i
   """   
 }
-
-

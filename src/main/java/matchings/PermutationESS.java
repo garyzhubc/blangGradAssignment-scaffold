@@ -37,7 +37,7 @@ public class PermutationESS extends Experiment
   {
     List<Double> samples = new ArrayList<>();
     int i = 0;
-    for (Map<String,String> line : BriefIO.readLines(csvFile).indexCSV().skip(1)) {
+    for (Map<String,String> line : BriefIO.readLines(csvFile).indexCSV().skip(0)) {
       if (i%(groupSize*nGroups)==0) {
         if (Integer.parseInt(line.get("value").trim())==0) {
           samples.add(1.);
