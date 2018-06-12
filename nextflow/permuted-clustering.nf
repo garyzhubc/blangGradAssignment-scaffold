@@ -10,8 +10,7 @@ process build {
   cache false
   output:
     file 'jars_hash' into jars_hash
-    file 'classpath' into classpath
-    
+    file 'classpath' into classpath    
   """
   set -e
   current_dir=`pwd`
@@ -40,6 +39,7 @@ jars_hash.into {
 classpath.into {
   classpath1
   classpath2
+  classpath3
 }
 
 process generateData {
@@ -50,7 +50,6 @@ process generateData {
     file jars_hash1
   output:
     file "generated$i" into data
-    
   """
   set -e
   java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
@@ -73,8 +72,8 @@ process runInference {
     file classpath2
     file jars_hash2
   output:
-    file "generated$i" into samples
-    file "runtime$i" into runtime
+    file "samples/permutations${i}.csv" into permutations
+    file "monitoring/runningTimeSummary${i}.tsv" into runningTimeSummary
   """
   set -e 
   tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
@@ -91,7 +90,28 @@ process runInference {
     --engine.nScans 2_000 \
     --engine.nThreads MAX \
     --engine.nChains 8
-  mv samples generated$i
-  mv monitoring runtime$i
+  mv samples/permutations.csv samples/permutations${i}.csv
+  mv monitoring/runningTimeSummary.tsv monitoring/runningTimeSummary${i}.tsv
   """   
 }
+
+process calculateESS {
+  cache 'deep'
+  input:
+    each i from minGroupSize..maxGroupSize
+    file permutations from permutations.collect()
+    file runningTimeSummary from runningTimeSummary.collect()
+    file classpath3
+  output:
+    file "executionInfo/ess_per_sec${i}.txt" into ess_per_sec
+  """
+  set -e
+  java -cp `cat classpath` -Xmx2g matchings.PermutationESS \
+    --csvFile permutations${i}.csv \
+    --groupSize $i \
+    --nGroups $nGroups \
+    --runtime 1
+  mv executionInfo/stdout.txt executionInfo/ess_per_sec${i}.txt
+  """
+} 
+

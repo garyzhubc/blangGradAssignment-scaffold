@@ -26,6 +26,9 @@ public class PermutationESS extends Experiment
   @Arg
   int nGroups;
   
+  @Arg
+  double runtime;
+  
   @Arg 
   Optional<String> field = Optional.empty();
   
@@ -49,8 +52,8 @@ public class PermutationESS extends Experiment
     }
     
     System.out.println(moment == 1 ?
-      EffectiveSampleSize.ess(samples) :
-      EffectiveSampleSize.ess(samples, x -> Math.pow(x, moment)));
+      EffectiveSampleSize.ess(samples)/runtime :
+      EffectiveSampleSize.ess(samples, x -> Math.pow(x, moment))/runtime);
   }
 
   public static void main(String [] args) 
