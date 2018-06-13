@@ -30,7 +30,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
 
   @Override
   /**
-   * Implementation of Locally-balanced Proposal by G. Zanella 2017.
+   * Efficient implementation of Locally-balanced Proposal by G. Zanella 2017.
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();
@@ -64,7 +64,7 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
     }
     sum = NumericalUtils.logAdd(log_probs_halved);
     double Qji = Math.exp(log_probs_halved[k]-sum);
-    if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi)*Qji/Qij))) {
+    if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi+Math.log(Qji)-Math.log(Qij))))) {
       Collections.swap(permutation.getConnections(),l,k-(2*permutation.componentSize()-l-1)*l/2+l+1);
     }
   }

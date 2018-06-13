@@ -4,7 +4,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-maxGroupSize = 10
+maxGroupSize = 30
 
 process build {
   cache false
@@ -39,7 +39,6 @@ jars_hash.into {
 classpath.into {
   classpath1
   classpath2
-  classpath3
 }
 
 process generateData {
@@ -58,9 +57,9 @@ process generateData {
     --experimentConfigs.recordExecutionInfo false \
     --experimentConfigs.recordGitInfo false \
     --model.nGroups $nGroups \
-    --model.groupSize $i \
+    --model.groupSize ${i} \
     --engine Forward
-  mv samples generated$i
+  mv samples generated${i}
   """
 }
 
@@ -72,7 +71,7 @@ process runInference {
     file classpath2
     file jars_hash2
   output:
-    file "results/latest/executionInfo/ess_per_sec${i}.txt" into ess_per_sec
+    file "results/latest/executionInfo/ess_per_sec${i}.csv" into ess_per_sec
   """
   set -e 
   tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
@@ -83,7 +82,7 @@ process runInference {
     --experimentConfigs.recordExecutionInfo false \
     --experimentConfigs.recordGitInfo false \
     --model.nGroups $nGroups \
-    --model.groupSize $i \
+    --model.groupSize ${i} \
     --model.observations.file data.csv \
     --engine PT \
     --engine.nScans 2_000 \
@@ -91,10 +90,10 @@ process runInference {
     --engine.nChains 1
   java -cp `cat classpath` -Xmx2g matchings.PermutationESS \
     --csvFile samples/permutations.csv \
-    --groupSize $i \
+    --groupSize ${i} \
     --nGroups $nGroups \
     --runtime \$(awk -F '\t' '\$1 == "samplingTime_ms" {print \$NF/1000}' monitoring/runningTimeSummary.tsv)
-  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_sec${i}.txt
+  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_sec${i}.csv
   """   
 }
 
@@ -103,9 +102,6 @@ process aggregateESS {
   input:
     each i from minGroupSize..maxGroupSize
     file ess_per_sec from ess_per_sec.collect()
-  publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  #!/usr/local/bin/Rscript
-  
   """
 }
