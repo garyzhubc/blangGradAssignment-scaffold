@@ -32,22 +32,7 @@ public class PermutationESS extends Experiment
   
   @Override
   public void run() 
-  {
-//    System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,ess_per_sec");
-//    List<Double> samples = new ArrayList<>(); 
-//    for (int i=0;i<nGroups*groupSize;i++) {
-//      for (int j=0;j<groupSize;j++) {
-//        int k=0;
-//        samples.clear();
-//        for (Map<String,String> line : BriefIO.readLines(csvFile).indexCSV().skip(0)) {
-//          if (k%(groupSize*nGroups)==i%groupSize) 
-//            samples.add(Integer.parseInt(line.get("value").trim())==j ? 1. : 0.);
-//          k++;
-//        }
-//        System.out.format("%d,%d,%d,%d,%d,%f\n",nGroups,groupSize,i/groupSize,i%groupSize,j,EffectiveSampleSize.ess(samples)/runtime);
-//      }
-//    }
-    
+  { 
     System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,ess_per_sec");
     List<Double> samples = new ArrayList<>();
     List<Map<String,String>> data = Lists.newArrayList(BriefIO.readLines(csvFile).indexCSV().skip(0));
