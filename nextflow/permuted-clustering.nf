@@ -4,7 +4,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-maxGroupSize = 30
+maxGroupSize = 50
 
 process build {
   cache false
@@ -97,11 +97,18 @@ process runInference {
   """   
 }
 
-process aggregateESS {
+process aggregateCSV {
   cache 'deep'
   input:
-    each i from minGroupSize..maxGroupSize
     file ess_per_sec from ess_per_sec.collect()
+  output:
+    file 'ess_per_sec_aggregated.csv' into ess_per_sec_aggregated 
+  publishDir deliverableDir, mode: 'copy', overwrite: true
   """
+  head -n 1 ess_per_sec${minGroupSize}.csv > ess_per_sec_aggregated.csv
+  for x in `seq $minGroupSize $maxGroupSize`;
+  do
+    tail -n +2 ess_per_sec\$x.csv >> ess_per_sec_aggregated.csv
+  done
   """
 }
