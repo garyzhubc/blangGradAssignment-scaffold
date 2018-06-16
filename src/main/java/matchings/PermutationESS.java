@@ -14,6 +14,7 @@ import briefj.BriefIO;
 
 /**
  * Implementation of https://github.com/alexandrebouchard/nedry/blob/master/src/main/java/mcli/ComputeESS.java
+ * 
  */
 public class PermutationESS extends Experiment 
 {
@@ -35,16 +36,12 @@ public class PermutationESS extends Experiment
     System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,ess_per_sec");
     List<Double> samples = new ArrayList<>();
     List<Map<String,String>> data = Lists.newArrayList(BriefIO.readLines(csvFile).indexCSV().skip(0));
-    int m = data.size();
     for (int i=0;i<nGroups;i++) {
       for (int j=0;j<groupSize;j++) {
         for (int k=0;k<groupSize;k++) {
-          int l=i*nGroups+j;
           samples.clear();
-          while (l<m) {
+          for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) 
             samples.add(Integer.parseInt(data.get(l).get("value").trim())==k ? 1. : 0.);
-            l+=groupSize*nGroups;
-          }
           System.out.format("%d,%d,%d,%d,%d,%f\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/runtime);
         }
       }

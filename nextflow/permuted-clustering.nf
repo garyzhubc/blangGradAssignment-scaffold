@@ -4,7 +4,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-maxGroupSize = 50
+maxGroupSize = 200
 
 process build {
   cache false
@@ -48,7 +48,7 @@ process generateData {
     file classpath1
     file jars_hash1
   output:
-    file "generated$i" into data
+    file "generated${i}" into data
   """
   set -e
   java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
@@ -102,13 +102,13 @@ process aggregateCSV {
   input:
     file ess_per_sec from ess_per_sec.collect()
   output:
-    file 'ess_per_sec_aggregated.csv' into ess_per_sec_aggregated 
+    file 'ess_per_sec_agg.csv' into ess_per_sec_agg
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  head -n 1 ess_per_sec${minGroupSize}.csv > ess_per_sec_aggregated.csv
+  head -n 1 ess_per_sec${minGroupSize}.csv > ess_per_sec_agg.csv
   for x in `seq $minGroupSize $maxGroupSize`;
   do
-    tail -n +2 ess_per_sec\$x.csv >> ess_per_sec_aggregated.csv
+    tail -n +2 ess_per_sec\$x.csv >> ess_per_sec_agg.csv
   done
   """
 }

@@ -38,8 +38,8 @@ public class BipartiteMatchingSampler implements Sampler {
     double log_prob_o = logDensity();
     
     // set quantities
-    int n = matching.componentSize();int k = matching.free1().size();int m = n-k;
-    int j= Integer.MIN_VALUE;int l = Integer.MIN_VALUE;
+    int n = matching.componentSize(); int k = matching.free1().size();int m = n-k;
+    int j = Integer.MIN_VALUE; int l = Integer.MIN_VALUE;
     double log_prob_otn,log_prob_nto;
     
     // propose

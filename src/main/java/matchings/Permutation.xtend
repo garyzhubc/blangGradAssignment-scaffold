@@ -19,7 +19,7 @@ import blang.inits.ConstructorArg
  * are automatically implemented, as well as other nice defaults 
  * (see the xtend documentation for details). 
  */
-@Samplers(PermutationSampler)
+@Samplers(PermutationSamplerLocallyBalanced)
 @Data class Permutation extends MatchingBase {
   @DesignatedConstructor
   new (@ConstructorArg("component") int componentSize) { 
