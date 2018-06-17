@@ -1,5 +1,5 @@
 // params default values:
-params.SAMPLERS = ["PermutationSampler", "PermutationSamplerLB"] 
+params.SAMPLERS = ["PermutationSampler", "PermutationSamplerLocallyBalanced"] 
 params.sampler = "PermutationSampler" 
 params.maxGS = 5
 
@@ -114,16 +114,16 @@ process calculateESS {
     file classpath3
     file jars_hash3  
   output:
-    file "essps_${x}.csv" into essps
+    file "results/latest/executionInfo/essps_${x}.csv" into essps
   """
   INF_DURATION=\$(tail -n +2 monitoring_${x}/runningTimeSummary.tsv | cut -c16-99 | tr -d '[:space:]')
   set -e
-  java -cp `cat classpath` -Xmx8g matchings.ComputePermutationESS \
+  java -cp `cat classpath` -Xmx8g matchings.PermutationESS \
     --nGroups $nGroups \
     --groupSize ${x} \
     --csvFile samples_${x}/permutations.csv \
-    --infDuration \$INF_DURATION \
-    --kthPerm 1
+    --samp_time \$INF_DURATION 
+  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/essps_${x}.csv
   """
 }
 
@@ -144,27 +144,11 @@ process aggregateCSV {
   """
 }
 
-process plot {
-  cache 'deep'
-  input:
-    file aggregatedCSV
-    val samplerName
-  output:
-    file 'essps_plot.pdf'
-  publishDir deliverableDir, mode: 'copy', overwrite: true
-  """
-  Rscript ../../../plot.R "aggregated_${samplerName}.csv"
-  """
-}
-
 process summarizePipeline {
-  cache false
-  
+  cache false 
   output:
       file 'pipeline-info.txt'
-      
   publishDir deliverableDir, mode: 'copy', overwrite: true
-  
   """
   echo 'scriptName: $workflow.scriptName' >> pipeline-info.txt
   echo 'start: $workflow.start' >> pipeline-info.txt
