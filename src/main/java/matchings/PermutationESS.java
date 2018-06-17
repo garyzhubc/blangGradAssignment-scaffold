@@ -39,7 +39,7 @@ public class PermutationESS extends Experiment
   double samp_time;
   
   /**
-   * returns ESS per second for all possible test functions
+   * returns ESS per second for all possible test functions that checks if a component is matched with another component
    */
   @Override
   public void run() 

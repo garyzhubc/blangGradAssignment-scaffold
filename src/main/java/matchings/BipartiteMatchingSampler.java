@@ -29,9 +29,9 @@ public class BipartiteMatchingSampler implements Sampler {
   @Override
   /**
    * This is an implementation of Metropolis-Hasting algorithm with uniform proposals:
-   * empty matching - add one edge [-1 -1 -1] -> [2 -1 -1] : choose i uniformly then j uniformly, set i-th entry to j
-   * partial matching - add or delete one edge [2 3 -1] -> [-1 3 -1] or [-1 2 -1]: add or delete uniformly
-   * full matching - delete one edge [0 2 1] -> [-1 2 1]: choose i uniformly and set to -1
+   * - If the the match is empty, then match i,j uniformly
+   * - If the match is not full, then add or delete an edge uniformly
+   * - If the match is full,then delete one edge uniformly
    */
   public void execute(Random rand) {
     double log_prob_o = logDensity();
