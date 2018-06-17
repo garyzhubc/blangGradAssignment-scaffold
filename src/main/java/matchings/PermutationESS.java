@@ -14,26 +14,37 @@ import briefj.BriefIO;
 
 /**
  * Implementation of https://github.com/alexandrebouchard/nedry/blob/master/src/main/java/mcli/ComputeESS.java
- * 
  */
 public class PermutationESS extends Experiment 
 {
+  /**
+   * directory of permutations.csv
+   */
   @Arg 
   File csvFile;
-  
+  /**
+   * size of each permutation
+   */
   @Arg
   int groupSize;
-  
+  /**
+   * number of permutations
+   */
   @Arg
   int nGroups;
-  
+  /**
+   * sampling time in millisecond
+   */
   @Arg
-  double runtime;
+  double samp_time;
   
+  /**
+   * returns ESS per second for all possible test functions
+   */
   @Override
   public void run() 
   { 
-    System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,ess_per_sec");
+    System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,essps");
     List<Double> samples = new ArrayList<>();
     List<Map<String,String>> data = Lists.newArrayList(BriefIO.readLines(csvFile).indexCSV().skip(0));
     for (int i=0;i<nGroups;i++) {
@@ -42,7 +53,7 @@ public class PermutationESS extends Experiment
           samples.clear();
           for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) 
             samples.add(Integer.parseInt(data.get(l).get("value").trim())==k ? 1. : 0.);
-          System.out.format("%d,%d,%d,%d,%d,%f\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/runtime);
+          System.out.format("%d,%d,%d,%d,%d,%f\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samp_time*1000);
         }
       }
     }

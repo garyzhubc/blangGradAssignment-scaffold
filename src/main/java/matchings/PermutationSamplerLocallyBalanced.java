@@ -46,9 +46,8 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
     }
     double sum = NumericalUtils.logAdd(log_probs_halved);
     double[] probs = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
-    for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) {
+    for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) 
       probs[i] = Math.exp(log_probs_halved[i]-sum);
-    }
     int k = rand.nextCategorical(probs);
     double Qij = probs[k];
     int l = (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*k))/(-2));
@@ -64,9 +63,8 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
     }
     sum = NumericalUtils.logAdd(log_probs_halved);
     double Qji = Math.exp(log_probs_halved[k]-sum);
-    if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi+Math.log(Qji)-Math.log(Qij))))) {
+    if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi+Math.log(Qji)-Math.log(Qij))))) 
       Collections.swap(permutation.getConnections(),l,k-(2*permutation.componentSize()-l-1)*l/2+l+1);
-    }
   }
   
   private double logDensity() {
