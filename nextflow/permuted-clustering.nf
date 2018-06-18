@@ -1,7 +1,7 @@
 // params default values:
 params.SAMPLERS = ["PermutationSampler", "PermutationSamplerLocallyBalanced"] 
-params.sampler = "PermutationSampler" 
-params.maxGS = 5
+params.sampler = "PermutationSamplerLocallyBalanced" 
+params.maxGS = 200
 
 //params chosen:
 deliverableDir = 'deliverables/permuted-clustering/' + params.sampler

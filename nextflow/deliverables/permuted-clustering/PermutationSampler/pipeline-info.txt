@@ -1,4 +1,4 @@
 scriptName: permuted-clustering.nf
-start: Sun Jun 17 01:36:38 PDT 2018
-runName: disturbed_wozniak
+start: Sun Jun 17 23:50:35 PDT 2018
+runName: spontaneous_darwin
 nextflow.version: 0.29.1
