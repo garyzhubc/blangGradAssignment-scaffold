@@ -1,4 +1,0 @@
-scriptName: permuted-clustering.nf
-start: Mon Jun 18 00:03:53 PDT 2018
-runName: focused_stallman
-nextflow.version: 0.29.1

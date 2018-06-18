@@ -1,16 +1,8 @@
-// params default values:
-params.SAMPLERS = ["PermutationSampler", "PermutationSamplerLocallyBalanced"] 
-params.sampler = "PermutationSamplerLocallyBalanced" 
-params.maxGS = 200
-
-//params chosen:
-deliverableDir = 'deliverables/permuted-clustering/' + params.sampler
-samplerName = params.sampler
-maxGroupSize = params.maxGS
+deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-excludedSampler = (params.SAMPLERS - samplerName).collect({"matchings." + it}).join(" ") //can be more than one
+maxGroupSize = 200
 
 process build {
   cache false
@@ -40,119 +32,81 @@ process build {
 jars_hash.into {
   jars_hash1
   jars_hash2
-  jars_hash3
 }
 
 classpath.into {
   classpath1
   classpath2
-  classpath3
 }
 
 process generateData {
   cache 'deep'
   input:
-    each x from minGroupSize..maxGroupSize
+    each i from minGroupSize..maxGroupSize
     file classpath1
     file jars_hash1
   output:
-    file "generated_${x}" into data
+    file "generated$i" into data
   """
   set -e
-  java -cp `cat classpath` -Xmx8g matchings.PermutedClustering \
+  java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
     --experimentConfigs.managedExecutionFolder false \
     --experimentConfigs.saveStandardStreams false \
     --experimentConfigs.recordExecutionInfo false \
     --experimentConfigs.recordGitInfo false \
-    --samplers.excluded ${excludedSampler} \
     --model.nGroups $nGroups \
-    --model.groupSize ${x} \
+    --model.groupSize ${i} \
     --engine Forward
-  mv samples generated_${x}
+  mv samples generated${i}
   """
 }
 
 process runInference {
   cache 'deep'
   input:
-    val excludedSampler
-    each x from minGroupSize..maxGroupSize
+    each i from minGroupSize..maxGroupSize
     file data from data.collect()
     file classpath2
     file jars_hash2
   output:
-    file "samples_${x}" into samples
-    file "monitoring_${x}" into monitorings
+    file "results/latest/executionInfo/ess_per_sec${i}.csv" into ess_per_sec
   """
-  set -e
-  tail -n +2 generated_${x}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
-  java -cp `cat classpath` -Xmx8g matchings.PermutedClustering \
+  set -e 
+  tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
+  java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
     --initRandom 123 \
     --experimentConfigs.managedExecutionFolder false \
     --experimentConfigs.saveStandardStreams false \
     --experimentConfigs.recordExecutionInfo false \
     --experimentConfigs.recordGitInfo false \
-    --samplers.excluded ${excludedSampler} \
     --model.nGroups $nGroups \
-    --model.groupSize ${x} \
+    --model.groupSize ${i} \
     --model.observations.file data.csv \
     --engine PT \
     --engine.nScans 2_000 \
     --engine.nThreads MAX \
     --engine.nChains 1
-  mv samples samples_${x}
-  mv monitoring monitoring_${x}
-  """   
-}
-
-process calculateESS {
-  cache 'deep'
-  input:
-    each x from minGroupSize..maxGroupSize
-    file samples from samples.collect()
-    file monitoring from monitorings.collect()
-    file classpath3
-    file jars_hash3  
-  output:
-    file "results/latest/executionInfo/essps_${x}.csv" into essps
-  """
-  INF_DURATION=\$(tail -n +2 monitoring_${x}/runningTimeSummary.tsv | cut -c16-99 | tr -d '[:space:]')
-  set -e
-  java -cp `cat classpath` -Xmx8g matchings.PermutationESS \
+  java -cp `cat classpath` -Xmx2g matchings.PermutationESS \
+    --csvFile samples/permutations.csv \
+    --groupSize ${i} \
     --nGroups $nGroups \
-    --groupSize ${x} \
-    --csvFile samples_${x}/permutations.csv \
-    --samp_time \$INF_DURATION 
-  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/essps_${x}.csv
-  """
+    --samp_time \$(awk -F '\t' '\$1 == "samplingTime_ms" {print \$NF}' monitoring/runningTimeSummary.tsv)
+  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_sec${i}.csv
+  """   
 }
 
 process aggregateCSV {
   cache 'deep'
   input:
-    val samplerName
-    file essps from essps.collect()
+    file ess_per_sec from ess_per_sec.collect()
   output:
-    file "aggregated_${samplerName}.csv" into aggregatedCSV
+    file 'ess_per_sec_aggregated.csv' into ess_per_sec_aggregated 
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  head -n 1 essps_${minGroupSize}.csv > aggregated_${samplerName}.csv
+  head -n 1 ess_per_sec${minGroupSize}.csv > ess_per_sec_aggregated.csv
   for x in `seq $minGroupSize $maxGroupSize`;
   do
-    tail -n +2 essps_\$x.csv >> aggregated_${samplerName}.csv
+    tail -n +2 ess_per_sec\$x.csv >> ess_per_sec_aggregated.csv
   done
-  """
-}
-
-process summarizePipeline {
-  cache false 
-  output:
-      file 'pipeline-info.txt'
-  publishDir deliverableDir, mode: 'copy', overwrite: true
-  """
-  echo 'scriptName: $workflow.scriptName' >> pipeline-info.txt
-  echo 'start: $workflow.start' >> pipeline-info.txt
-  echo 'runName: $workflow.runName' >> pipeline-info.txt
-  echo 'nextflow.version: $workflow.nextflow.version' >> pipeline-info.txt
   """
 }
