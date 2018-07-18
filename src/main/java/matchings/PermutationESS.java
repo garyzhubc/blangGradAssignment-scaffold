@@ -44,7 +44,7 @@ public class PermutationESS extends Experiment
   @Override
   public void run() 
   { 
-    System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,essps");
+    System.out.println("nGroups,groupSize,whichGroup,testFrom,testTo,essps,mean");
     List<Double> samples = new ArrayList<>();
     List<Map<String,String>> data = Lists.newArrayList(BriefIO.readLines(csvFile).indexCSV().skip(0));
     for (int i=0;i<nGroups;i++) {
@@ -53,7 +53,7 @@ public class PermutationESS extends Experiment
           samples.clear();
           for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) 
             samples.add(Integer.parseInt(data.get(l).get("value").trim())==k ? 1. : 0.);
-          System.out.format("%d,%d,%d,%d,%d,%f\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samp_time*1000);
+          System.out.format("%d,%d,%d,%d,%d,%d,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samp_time*1000, samples.size()/(nGroups*groupSize));
         }
       }
     }
