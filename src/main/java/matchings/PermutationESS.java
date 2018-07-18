@@ -53,7 +53,7 @@ public class PermutationESS extends Experiment
           samples.clear();
           for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) 
             samples.add(Integer.parseInt(data.get(l).get("value").trim())==k ? 1. : 0.);
-          System.out.format("%d,%d,%d,%d,%d,%d,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samples.size(),samples.size()/(nGroups*groupSize));
+          System.out.format("%d,%d,%d,%d,%d,%d,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/data.size(),samples.size()/data.size());
         }
       }
     }
