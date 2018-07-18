@@ -39,7 +39,7 @@ public class PermutationESS extends Experiment
   double samp_time;
   
   /**
-   * returns ESS per second for all possible test functions that checks if a component is matched with another component
+   * returns ESS per iteration for all possible test functions that checks if a component is matched with another component
    */
   @Override
   public void run() 
@@ -51,9 +51,16 @@ public class PermutationESS extends Experiment
       for (int j=0;j<groupSize;j++) {
         for (int k=0;k<groupSize;k++) {
           samples.clear();
-          for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) 
-            samples.add(Integer.parseInt(data.get(l).get("value").trim())==k ? 1. : 0.);
-          System.out.format("%d,%d,%d,%d,%d,%d,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samples.size(),samples.size()/(nGroups*groupSize));
+          int m = 0;
+          for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) {
+            if (Integer.parseInt(data.get(l).get("value").trim()) == k) {
+              samples.add(1.);
+              m += 1;
+            } else {
+              samples.add(0.);
+            }
+          }
+          System.out.format("%d,%d,%d,%d,%d,%f,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samples.size(),m/samples.size());
         }
       }
     }
