@@ -2,7 +2,7 @@ deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
 minGroupSize = 3
-maxGroupSize = 150
+maxGroupSize = 100
 
 process build {
   cache false
