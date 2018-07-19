@@ -60,7 +60,7 @@ public class PermutationESS extends Experiment
               samples.add(0.);
             }
           }
-          System.out.format("%d,%d,%d,%d,%d,%f,%d\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samples.size(),m/samples.size());
+          System.out.format("%d,%d,%d,%d,%d,%f,%f\n",nGroups,groupSize,i,j,k,EffectiveSampleSize.ess(samples)/samples.size(),m/samples.size());
         }
       }
     }
