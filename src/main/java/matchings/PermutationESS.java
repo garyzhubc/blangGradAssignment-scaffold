@@ -51,7 +51,7 @@ public class PermutationESS extends Experiment
       for (int j=0;j<groupSize;j++) {
         for (int k=0;k<groupSize;k++) {
           samples.clear();
-          int m = 0;
+          double m = 0;
           for (int l=i*nGroups+j;l<data.size();l+=groupSize*nGroups) {
             if (Integer.parseInt(data.get(l).get("value").trim()) == k) {
               samples.add(1.);
