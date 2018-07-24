@@ -15,7 +15,6 @@ model PermutedClustering {
   }
   random Matrix observations ?: latentMatrix(nGroups, groupSize)
   laws {
-    /* startRem // Fill this. */
     means.get(0) ~ ContinuousUniform(0.0, 1.0)
     for (int clusterIdx : 1 ..< means.size) {
       means.get(clusterIdx) | RealVar previous = means.get(clusterIdx - 1) ~ ContinuousUniform(previous, previous + 1.0)
@@ -35,6 +34,5 @@ model PermutedClustering {
           )
       }
     }
-    /* endRem */    
   }
 }
