@@ -27,44 +27,54 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
    * resampled. 
    */
   @ConnectedFactor List<LogScaleFactor> numericFactors;
-
+    
   @Override
   /**
    * Efficient implementation of Locally-balanced Proposal by G. Zanella 2017.
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();
-    double[] log_probs_halved = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
+    double[] log_probs_nbh = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
+    update_log_probs_nbh(log_probs_nbh, log_Pi);
+    double sum_log_probs_nbh = NumericalUtils.logAdd(log_probs_nbh);
+    double[] probs_nbh = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
+    for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) 
+      probs_nbh[i] = Math.exp(log_probs_nbh[i]-sum_log_probs_nbh);
+    int fwd_idx = rand.nextCategorical(probs_nbh);
+    double Qij = probs_nbh[fwd_idx];
+    int bwd_idx = (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*fwd_idx))/(-2));
+    Collections.swap(permutation.getConnections(),bwd_idx,fwd_idx-(2*permutation.componentSize()-bwd_idx-1)*bwd_idx/2+bwd_idx+1);
+    double log_Pj = logDensity();
+    update_log_probs_nbh(log_probs_nbh, log_Pj);
+    sum_log_probs_nbh = NumericalUtils.logAdd(log_probs_nbh);
+    double Qji = Math.exp(log_probs_nbh[fwd_idx]-sum_log_probs_nbh);
+    if (!rand.nextBernoulli(Math.min(1,Math.exp(log_Pj-log_Pi+Math.log(Qji)-Math.log(Qij))))) 
+      Collections.swap(permutation.getConnections(),bwd_idx,fwd_idx-(2*permutation.componentSize()-bwd_idx-1)*bwd_idx/2+bwd_idx+1);
+  }
+  
+  /**
+   * Update neighborhood log-probabilities
+   */
+  private void update_log_probs_nbh(double[] log_probs_nbh, double log_P) {
     int idx = 0;
     for (int i=0;i<permutation.componentSize();i++) {
       for (int j=i+1;j<permutation.componentSize();++j) {
         Collections.swap(permutation.getConnections(),i,j);
-        log_probs_halved[idx] = logDensity()/2;
+        log_probs_nbh[idx] = bal_fun(log_P);
         Collections.swap(permutation.getConnections(),i,j);
         idx++;
       }
     }
-    double sum = NumericalUtils.logAdd(log_probs_halved);
-    double[] probs = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
-    for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) 
-      probs[i] = Math.exp(log_probs_halved[i]-sum);
-    int k = rand.nextCategorical(probs);
-    double Qij = probs[k];
-    int l = (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*k))/(-2));
-    Collections.swap(permutation.getConnections(),l,k-(2*permutation.componentSize()-l-1)*l/2+l+1);
-    idx = 0;
-    for (int i=0;i<permutation.componentSize();i++) {
-      for (int j=i+1;j<permutation.componentSize();++j) {
-        Collections.swap(permutation.getConnections(),i,j);
-        log_probs_halved[idx] = logDensity()/2;
-        Collections.swap(permutation.getConnections(),i,j);
-        idx++;
-      }
-    }
-    sum = NumericalUtils.logAdd(log_probs_halved);
-    double Qji = Math.exp(log_probs_halved[k]-sum);
-    if (!rand.nextBernoulli(Math.min(1,Math.exp(logDensity()-log_Pi+Math.log(Qji)-Math.log(Qij))))) 
-      Collections.swap(permutation.getConnections(),l,k-(2*permutation.componentSize()-l-1)*l/2+l+1);
+  }
+  
+  /**
+   * Balancing function
+   */
+  private double bal_fun(double log_P) {
+//    return Math.min(0,logDensity()-log_P);  
+//    return logDensity()-NumericalUtils.logAdd(logDensity(),log_P); 
+    return logDensity()/2.0;  
+//    return Math.max(0,logDensity()-log_P);  
   }
   
   private double logDensity() {
