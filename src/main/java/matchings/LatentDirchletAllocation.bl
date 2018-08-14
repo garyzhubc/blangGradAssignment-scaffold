@@ -1,0 +1,49 @@
+package matchings
+
+import bayonet.math.NumericalUtils
+import org.eclipse.xtext.xbase.lib.ArrayLiterals
+
+/**
+ * Implementation of LDA in STAN https://github.com/stan-dev/example-models/blob/master/misc/cluster/lda/lda.stan
+ */
+model LatentDrichletAllocation {
+  param Integer K                                   // num topics
+  param Integer V                                   // num words
+  param Integer M                                   // num docs
+  param Integer N                                   // total word instances
+  param List<Integer> w        // num words  
+  param List<Integer> doc     // word n
+  param Matrix alpha ?: ones(K)                     // topic prior
+  param Matrix beta ?: ones(V)                      // word prior
+  random List<Simplex> theta ?: {                   // topic dist for doc m
+    val result = new ArrayList
+    for (k : 0 ..< K) 
+      result.add(latentSimplex(M))
+    return result
+  }    
+  random List<Simplex> phi ?: {                     // word dist for topic k
+  	val result = new ArrayList
+    for (v : 0 ..< V) 
+      result.add(latentSimplex(K))
+    return result
+  }
+  laws {
+  	for (int m : 0 ..< M) {
+  	  theta.get(m) | alpha ~ Dirichlet(alpha)       // prior
+  	}
+  	for (int k : 0 ..< K) {
+  	  phi.get(k)| beta ~ Dirichlet(beta)            // prior
+  	}
+  	logf (theta, phi, N, K, doc, w) {               // likelihood
+  	  var double sum = 0
+  	  for (int n : 0 ..< N) {
+   	    var double[] gamma = ArrayLiterals.newDoubleArrayOfSize(K)
+  	  	for (int k : 0 ..< K) {
+  	  	  gamma.set(k, Math.log(theta.get(doc.get(n)).get(k)) + Math.log(theta.get(k).get(w.get(n))))
+  	  	}
+  	  	sum += NumericalUtils.logAdd(gamma)
+  	  }
+  	  return sum
+  	}
+  }
+}
