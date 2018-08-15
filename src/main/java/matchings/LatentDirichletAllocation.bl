@@ -11,8 +11,8 @@ model LatentDrichletAllocation {
   param Integer V                                   // num words
   param Integer M                                   // num docs
   param Integer N                                   // total word instances
-  param List<Integer> w        // num words  
-  param List<Integer> doc     // word n
+  param List<Integer> w                             // num words  
+  param List<Integer> doc                           // word n
   param Matrix alpha ?: ones(K)                     // topic prior
   param Matrix beta ?: ones(V)                      // word prior
   random List<Simplex> theta ?: {                   // topic dist for doc m
