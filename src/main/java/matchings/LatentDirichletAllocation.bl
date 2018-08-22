@@ -4,37 +4,72 @@ import bayonet.math.NumericalUtils
 import org.eclipse.xtext.xbase.lib.ArrayLiterals
 
 /**
- * Implementation of LDA in STAN https://github.com/stan-dev/example-models/blob/master/misc/cluster/lda/lda.stan
+ * Implementation of LDA in STAN
+ * https://github.com/stan-dev/example-models/blob/master/misc/cluster/lda/lda.stan
  */
 model LatentDrichletAllocation {
-  param Integer K                                   // num topics
-  param Integer V                                   // num words
-  param Integer M                                   // num docs
-  param Integer N                                   // total word instances
-  param List<Integer> w                             // num words  
-  param List<Integer> doc                           // word n
-  param Matrix alpha ?: ones(K)                     // topic prior
-  param Matrix beta ?: ones(V)                      // word prior
-  random List<Simplex> theta ?: {                   // topic dist for doc m
+  param Integer K ?: 2                                   // num topics
+  param Integer V ?: 5                                   // num words
+  param Integer M ?: 25                                  // num docs
+  param Integer N ?: 10                                  // total word instances
+  param List<Integer> w ?: #[4, 3, 5, 4, 3, 3, 3, 3, 3, 4, 5, 3, 4, 4, 5, 
+  	3, 4, 4, 4, 3, 5, 4, 5, 2, 3, 3, 1, 5, 5, 1, 4, 
+  	3, 1, 2, 5, 4, 4, 3, 5, 4, 2, 4, 5, 3, 4, 1, 4, 
+  	4, 3, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 3, 1, 2, 2, 
+  	4, 4, 5, 4, 5, 5, 4, 3, 5, 4, 4, 4, 2, 2, 1, 1, 
+  	2, 1, 3, 1, 2, 1, 1, 1, 3, 2, 3, 3, 5, 4, 5, 4, 
+  	3, 5, 4, 2, 2, 2, 1, 3, 2, 1, 3, 1, 3, 1, 1, 2, 
+  	1, 2, 2, 4, 4, 4, 5, 5, 4, 4, 5, 4, 3, 3, 3, 1, 
+  	3, 3, 4, 2, 1, 3, 4, 4, 5, 4, 4, 4, 3, 4, 3, 4, 
+  	5, 1, 2, 1, 3, 2, 1, 1, 2, 3, 3, 3, 3, 4, 1, 4, 
+  	4, 4, 4, 3, 4, 4, 1, 2, 2, 3, 3, 1, 1, 4, 1, 3, 
+  	1, 5, 3, 2, 2, 1, 1, 2, 3, 3, 4, 4, 5, 3, 4, 3, 
+  	1, 5, 5, 5, 3, 3, 4, 5, 3, 3, 3, 2, 3, 1, 3, 3, 
+  	1, 3, 1, 5, 5, 5, 2, 2, 3, 3, 3, 1, 1, 5, 5, 5, 
+  	3, 1, 5, 4, 1, 3, 3, 3, 3, 4, 2, 5, 1, 3, 5, 2, 
+  	5, 5, 2, 1, 3, 3, 5, 3, 5, 3, 3, 5, 1, 2, 2, 1, 
+  	1, 2, 1, 2, 3, 1, 1]                                 // word n  
+  param List<Integer> doc ?: #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 
+  	2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+  	3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 
+  	4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 
+  	6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 8, 8, 8, 8, 
+  	8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 
+  	9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 
+  	10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 
+  	12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 
+  	14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 
+  	15, 15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 
+  	16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 
+  	17, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 
+  	19, 19, 19, 19, 19, 19, 19, 20, 20, 20, 20, 20, 20, 
+  	20, 20, 20, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 
+  	22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 
+  	23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 24, 24, 24, 
+  	24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 
+  	25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25]          // doc ID for word n
+  param Matrix alpha ?: ones(K)                          // topic prior
+  param Matrix beta ?: ones(V)                           // word prior
+  random List<Simplex> theta ?: {                        // topic dist for doc m
     val result = new ArrayList
-    for (k : 0 ..< K) 
-      result.add(latentSimplex(M))
+    for (m : 0 ..< M) 
+      result.add(latentSimplex(K))
     return result
   }    
-  random List<Simplex> phi ?: {                     // word dist for topic k
+  random List<Simplex> phi ?: {                          // word dist for topic k
   	val result = new ArrayList
-    for (v : 0 ..< V) 
-      result.add(latentSimplex(K))
+    for (k : 0 ..< K) 
+      result.add(latentSimplex(V))
     return result
   }
   laws {
   	for (int m : 0 ..< M) {
-  	  theta.get(m) | alpha ~ Dirichlet(alpha)       // prior
+  	  theta.get(m) | alpha ~ Dirichlet(alpha)            // prior
   	}
   	for (int k : 0 ..< K) {
-  	  phi.get(k)| beta ~ Dirichlet(beta)            // prior
+  	  phi.get(k) | beta ~ Dirichlet(beta)                // prior
   	}
-  	logf (theta, phi, N, K, doc, w) {               // likelihood
+  	logf (theta, phi, N, K, doc, w) {                    // likelihood
   	  var double sum = 0
   	  for (int n : 0 ..< N) {
    	    var double[] gamma = ArrayLiterals.newDoubleArrayOfSize(K)
