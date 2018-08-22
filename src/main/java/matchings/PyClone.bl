@@ -1,0 +1,16 @@
+package matchings
+
+model PyClone { 
+  random List<RealVar> p ?: latentRealList(4)
+  random List<IntVar> z ?: latentIntList(100)
+  random List<IntVar> x ?: latentIntList(100) 
+  laws {
+  	for (int i: 0..< 4) {
+  	  p.get(i) ~ ContinuousUniform(0,1)
+  	}
+  	for (int i: 0..< 100) {
+      z.get(i) ~ DiscreteUniform(0,4)
+      x.get(i) | Integer j = z.get(i), p ~ Binomial(100, p.get(j))
+    }
+  }
+}
