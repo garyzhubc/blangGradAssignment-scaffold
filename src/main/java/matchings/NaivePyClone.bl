@@ -1,6 +1,6 @@
 package matchings
 
-model PyClone { 
+model NaivePyClone { 
   random List<RealVar> p ?: latentRealList(4)
   random List<IntVar> z ?: latentIntList(100)
   random List<IntVar> x ?: latentIntList(100) 
