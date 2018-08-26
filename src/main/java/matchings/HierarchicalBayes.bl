@@ -1,0 +1,21 @@
+package matchings
+
+model HierarchicalBayes {
+  param Integer N ?: 4
+  param Integer M ?: 3
+  param Matrix a ?: ones(M)
+  random List<Simplex> z ?: {
+    val result = new ArrayList<Simplex>
+    for (group : 0 ..< N) 
+      result.add(latentSimplex(M))
+    return result
+  }
+  param List<IntVar> x ?: #[0,0,1,2]
+  
+  laws {
+  	for (int i: 0..< N) {
+  	  z.get(i) | a ~ Dirichlet(a)
+  	  x.get(i) | z,i ~ Categorical(z.get(i))
+  	}
+  }
+}
