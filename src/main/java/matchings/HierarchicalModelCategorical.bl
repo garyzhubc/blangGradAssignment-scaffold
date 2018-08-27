@@ -3,7 +3,8 @@ package matchings
 model HierarchicalModelCategorical {
   param Integer N ?: 4
   param Integer M ?: 3
-  param Matrix a ?: ones(M)
+  param Integer b ?: 5
+  random Matrix a ?: ones(M)
   random List<Simplex> z ?: {
     val result = new ArrayList<Simplex>
     for (group : 0 ..< N) 
@@ -13,9 +14,12 @@ model HierarchicalModelCategorical {
   param List<IntVar> x ?: #[0,0,1,2]
   
   laws {
+  	for (int j: 0..< M) {
+  	  a.get(j) | b ~ Exponential(b)
+  	}
   	for (int i: 0..< N) {
   	  z.get(i) | a ~ Dirichlet(a)
-  	  x.get(i) | z,i ~ Categorical(z.get(i))
+  	  x.get(i) | z, i ~ Categorical(z.get(i))
   	}
   }
 }
