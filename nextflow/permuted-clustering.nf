@@ -1,14 +1,14 @@
 deliverableDir = 'deliverables/' + workflow.scriptName.replace('.nf','')
 
 nGroups = 2
-minGroupSize = 3
-maxGroupSize = 10
+minGroupSize = 150
+maxGroupSize = 200
 
 process build {
   cache false
   output:
     file 'jars_hash' into jars_hash
-    file 'classpath' into classpath    
+    file 'classpath' into classpath
   """
   set -e
   current_dir=`pwd`
@@ -69,9 +69,9 @@ process runInference {
     file classpath2
     file jars_hash2
   output:
-    file "results/latest/executionInfo/ess_per_sec${i}.csv" into ess_per_sec
+    file "results/latest/executionInfo/ess_per_iter${i}.csv" into ess_per_iter
   """
-  set -e 
+  set -e
   tail -n +2 generated${i}/observations.csv | awk -F "," '{print \$2, ",", \$3, ",", \$4}' | sed 's/ //g' > data.csv
   java -cp `cat classpath` -Xmx2g matchings.PermutedClustering \
     --initRandom 123 \
@@ -91,22 +91,22 @@ process runInference {
     --groupSize ${i} \
     --nGroups $nGroups \
     --samp_time \$(awk -F '\t' '\$1 == "samplingTime_ms" {print \$NF}' monitoring/runningTimeSummary.tsv)
-  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_sec${i}.csv
-  """   
+  mv results/latest/executionInfo/stdout.txt results/latest/executionInfo/ess_per_iter${i}.csv
+  """
 }
 
 process aggregateCSV {
   cache 'deep'
   input:
-    file ess_per_sec from ess_per_sec.collect()
+    file ess_per_iter from ess_per_iter.collect()
   output:
-    file 'ess_per_sec_aggregated.csv' into ess_per_sec_aggregated 
+    file 'ess_per_iter_aggregated.csv' into ess_per_iter_aggregated
   publishDir deliverableDir, mode: 'copy', overwrite: true
   """
-  head -n 1 ess_per_sec${minGroupSize}.csv > ess_per_sec_aggregated.csv
+  head -n 1 ess_per_iter${minGroupSize}.csv > ess_per_iter_aggregated.csv
   for x in `seq $minGroupSize $maxGroupSize`;
   do
-    tail -n +2 ess_per_sec\$x.csv >> ess_per_sec_aggregated.csv
+    tail -n +2 ess_per_iter\$x.csv >> ess_per_iter_aggregated.csv
   done
   """
 }
