@@ -3,6 +3,8 @@ package matchings;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math3.util.Pair;
+
 import bayonet.distributions.Random;
 import bayonet.math.NumericalUtils;
 
@@ -34,22 +36,55 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
    */
   public void execute(Random rand) {
     double log_Pi = logDensity();
-    double[] log_probs_nbh = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
+    double[] log_probs_nbh = new double[neighbourhood_size()];
     update_log_probs_nbh(log_probs_nbh, log_Pi);
+    Pair<Integer, Double> fwd_idx_and_Qij = get_fwd_idx_and_Qij(rand, log_probs_nbh);
+    int fwd_idx = fwd_idx_and_Qij.getFirst();
+    double Qij = fwd_idx_and_Qij.getSecond();
+    int bwd_idx = get_backward_index(fwd_idx);
+    swap(bwd_idx,fwd_idx);
+    double log_Pj = logDensity();
+    update_log_probs_nbh(log_probs_nbh, log_Pj);
+    double Qji = getQji(log_probs_nbh, fwd_idx);
+    if (!rand.nextBernoulli(acceptPr(log_Pj,log_Pi,Qji,Qij))) 
+      swap(bwd_idx,fwd_idx);
+  }
+  
+  private double acceptPr(double log_Pj, double log_Pi, double Qji, double Qij) {
+    return Math.min(1,Math.exp(log_Pj-log_Pi+Math.log(Qji)-Math.log(Qij)));
+  }
+  
+  private void swap(int bwd_idx, int fwd_idx) {
+    Collections.swap(permutation.getConnections(),bwd_idx,index_swapped(bwd_idx, fwd_idx));
+  }
+  
+  private Pair<Integer, Double> get_fwd_idx_and_Qij(Random rand, double[] log_probs_nbh) {
     double sum_log_probs_nbh = NumericalUtils.logAdd(log_probs_nbh);
-    double[] probs_nbh = new double[(permutation.componentSize()*(permutation.componentSize()-1))/2];
-    for (int i=0;i<(permutation.componentSize()*(permutation.componentSize()-1))/2;i++) 
+    double[] probs_nbh = new double[neighbourhood_size()];
+    for (int i=0;i<neighbourhood_size();i++) 
       probs_nbh[i] = Math.exp(log_probs_nbh[i]-sum_log_probs_nbh);
     int fwd_idx = rand.nextCategorical(probs_nbh);
     double Qij = probs_nbh[fwd_idx];
-    int bwd_idx = (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*fwd_idx))/(-2));
-    Collections.swap(permutation.getConnections(),bwd_idx,fwd_idx-(2*permutation.componentSize()-bwd_idx-1)*bwd_idx/2+bwd_idx+1);
-    double log_Pj = logDensity();
-    update_log_probs_nbh(log_probs_nbh, log_Pj);
-    sum_log_probs_nbh = NumericalUtils.logAdd(log_probs_nbh);
-    double Qji = Math.exp(log_probs_nbh[fwd_idx]-sum_log_probs_nbh);
-    if (!rand.nextBernoulli(Math.min(1,Math.exp(log_Pj-log_Pi+Math.log(Qji)-Math.log(Qij))))) 
-      Collections.swap(permutation.getConnections(),bwd_idx,fwd_idx-(2*permutation.componentSize()-bwd_idx-1)*bwd_idx/2+bwd_idx+1);
+    return new Pair<Integer, Double>(fwd_idx,Qij);
+  }
+  
+  /**
+   * Indices calculator
+   */
+  private double getQji(double[] log_probs_nbh, int fwd_idx) {
+    return Math.exp(log_probs_nbh[fwd_idx]-NumericalUtils.logAdd(log_probs_nbh));
+  }
+  
+  private int index_swapped(int bwd_idx, int fwd_idx) {
+    return fwd_idx-(2*permutation.componentSize()-bwd_idx-1)*bwd_idx/2+bwd_idx+1;
+  }
+  
+  private int neighbourhood_size() {
+    return (permutation.componentSize()*(permutation.componentSize()-1))/2;
+  }
+  
+  private int get_backward_index(int fwd_idx) {
+    return (int) ((-(2*(permutation.componentSize()+1)-3)+Math.sqrt(Math.pow(2*(permutation.componentSize()+1)-3,2)-8*fwd_idx))/(-2));
   }
   
   /**
