@@ -50,10 +50,16 @@ public class PermutationSamplerLocallyBalanced implements Sampler {
       swap(bwd_idx,fwd_idx);
   }
   
+  /**
+   * Acceptance probability
+   */
   private double acceptPr(double log_Pj, double log_Pi, double Qji, double Qij) {
     return Math.min(1,Math.exp(log_Pj-log_Pi+Math.log(Qji)-Math.log(Qij)));
   }
   
+  /**
+   * Swap by forward and backward indices
+   */
   private void swap(int bwd_idx, int fwd_idx) {
     Collections.swap(permutation.getConnections(),bwd_idx,index_swapped(bwd_idx, fwd_idx));
   }
