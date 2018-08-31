@@ -6,7 +6,7 @@
 #### run this before everything
 #/////////////////////////////////////////////////////////////////////
 
-setwd("/Users/garyzhu/Desktop/blang/deliverables")
+setwd("/Users/garyzhu/Desktop/data_analysis")
 
 #/////////////////////////////////////////////////////////////////////
 #### power from 1 to 1/9
@@ -14,6 +14,7 @@ setwd("/Users/garyzhu/Desktop/blang/deliverables")
 
 require(dplyr)
 require(ggplot2)
+require(rio)
 
 lb1 = read.csv("esspi/ess_per_iter_aggregated_1.csv")
 lb2 = read.csv("esspi/ess_per_iter_aggregated_2.csv")
@@ -48,19 +49,19 @@ lb9_agg = aggregate(lb9["esspi"], list(lb9$groupSize), mean)
 plot <- ggplot() +     
   xlab("log(Group Size)") +
   ylab("log(ESS/Iter)") +
-  labs(color="n") +
-  geom_point(data=lb1_agg, aes(x=log(lb1_agg$Group.1), y=log(lb1_agg$esspi), colour='1')) +
-  geom_point(data=lb2_agg, aes(x=log(lb2_agg$Group.1), y=log(lb2_agg$esspi), colour='2')) +
-  geom_point(data=lb3_agg, aes(x=log(lb3_agg$Group.1), y=log(lb3_agg$esspi), colour='3')) +
-  geom_point(data=lb4_agg, aes(x=log(lb4_agg$Group.1), y=log(lb4_agg$esspi), colour='4')) +
-  geom_point(data=lb5_agg, aes(x=log(lb5_agg$Group.1), y=log(lb5_agg$esspi), colour='5')) +
-  geom_point(data=lb6_agg, aes(x=log(lb6_agg$Group.1), y=log(lb6_agg$esspi), colour='6')) +
-  geom_point(data=lb7_agg, aes(x=log(lb7_agg$Group.1), y=log(lb7_agg$esspi), colour='7')) +
-  geom_point(data=lb8_agg, aes(x=log(lb8_agg$Group.1), y=log(lb8_agg$esspi), colour='8')) +
-  geom_point(data=lb9_agg, aes(x=log(lb9_agg$Group.1), y=log(lb9_agg$esspi), colour='9'))
+  labs(color="T") +
+  geom_line(data=lb1_agg,aes(x=log(Group.1), y=log(esspi), colour='1')) +
+  geom_line(data=lb2_agg,aes(x=log(Group.1), y=log(esspi), colour='2')) +
+  geom_line(data=lb3_agg,aes(x=log(Group.1), y=log(esspi), colour='3')) +
+  geom_line(data=lb4_agg,aes(x=log(Group.1), y=log(esspi), colour='4')) +
+  geom_line(data=lb5_agg,aes(x=log(Group.1), y=log(esspi), colour='5')) +
+  geom_line(data=lb6_agg,aes(x=log(Group.1), y=log(esspi), colour='6')) +
+  geom_line(data=lb7_agg,aes(x=log(Group.1), y=log(esspi), colour='7')) +
+  geom_line(data=lb8_agg,aes(x=log(Group.1), y=log(esspi), colour='8')) +
+  geom_line(data=lb9_agg,aes(x=log(Group.1), y=log(esspi), colour='9')) 
 plot
 
-ggsave("esspi/esspi.pdf")
+ggsave("esspi/esspit.pdf")
 
 #/////////////////////////////////////////////////////////////////////
 #### groupSize from 3 to 9, single permutation
@@ -97,13 +98,13 @@ plot <- ggplot() +
   xlab("log(Group Size)") +
   ylab("log(ESS/Iter)") +
   labs(color="nGroups") +
-  geom_point(data=lbg3_agg, aes(x=log(lbg3_agg$Group.1), y=log(lbg3_agg$esspi), colour='3')) +
-  geom_point(data=lbg4_agg, aes(x=log(lbg4_agg$Group.1), y=log(lbg4_agg$esspi), colour='4')) +
-  geom_point(data=lbg5_agg, aes(x=log(lbg5_agg$Group.1), y=log(lbg5_agg$esspi), colour='5')) +
-  geom_point(data=lbg6_agg, aes(x=log(lbg6_agg$Group.1), y=log(lbg6_agg$esspi), colour='6')) +
-  geom_point(data=lbg7_agg, aes(x=log(lbg7_agg$Group.1), y=log(lbg7_agg$esspi), colour='7')) +
-  geom_point(data=lbg8_agg, aes(x=log(lbg8_agg$Group.1), y=log(lbg8_agg$esspi), colour='8')) +
-  geom_point(data=lbg9_agg, aes(x=log(lbg9_agg$Group.1), y=log(lbg9_agg$esspi), colour='9'))
+  geom_point(data=lbg3_agg, aes(x=log(Group.1), y=log(esspi), colour='3')) +
+  geom_point(data=lbg4_agg, aes(x=log(Group.1), y=log(esspi), colour='4')) +
+  geom_point(data=lbg5_agg, aes(x=log(Group.1), y=log(esspi), colour='5')) +
+  geom_point(data=lbg6_agg, aes(x=log(Group.1), y=log(esspi), colour='6')) +
+  geom_point(data=lbg7_agg, aes(x=log(Group.1), y=log(esspi), colour='7')) +
+  geom_point(data=lbg8_agg, aes(x=log(Group.1), y=log(esspi), colour='8')) +
+  geom_point(data=lbg9_agg, aes(x=log(Group.1), y=log(esspi), colour='9'))
   
 plot
 ggsave('esspig/esspig.pdf')
@@ -128,10 +129,11 @@ lbsqrt = aggregate(lbsqrt["esspi"], list(lbsqrt$groupSize), mean)
 plot <- ggplot() +     
   xlab("log(Group Size)") +
   ylab("log(ESS/Iter)") +
-  geom_point(data=lbmin, aes(x=log(lbmin$Group.1), y=log(lbmin$esspi), colour='min')) +
-  geom_point(data=lbmax, aes(x=log(lbmax$Group.1), y=log(lbmax$esspi), colour='max')) +
-  geom_point(data=lbbaker, aes(x=log(lbbaker$Group.1), y=log(lbbaker$esspi), colour='baker')) +
-  geom_point(data=lbsqrt, aes(x=log(lbsqrt$Group.1), y=log(lbsqrt$esspi), colour='sqrt'))
+  labs(color="BF") +
+  geom_line(data=lbmin, aes(x=log(Group.1), y=log(esspi), colour='min')) +
+  geom_line(data=lbmax, aes(x=log(Group.1), y=log(esspi), colour='max')) +
+  geom_line(data=lbbaker, aes(x=log(Group.1), y=log(esspi), colour='baker')) +
+  geom_line(data=lbsqrt, aes(x=log(Group.1), y=log(esspi), colour='sqrt'))
   
 plot
 ggsave('esspibf/esspibf.pdf')
@@ -164,54 +166,119 @@ plot <- ggplot() +
   ylab("log(ESS/Iter)") +
   labs(color='') +
   geom_ribbon(data=large_agg, aes(x=log(Group.1), ymax=log(high_q), ymin=log(low_q)), alpha=0.05, fill='red') +
-  geom_point(data=large_agg, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi), colour='LB')) +
+  geom_point(data=large_agg, aes(x=log(Group.1), y=log(esspi), colour='LB')) +
   geom_ribbon(data=large_agg1, aes(x=log(Group.1), ymax=log(high_q), ymin=log(low_q)), alpha=0.05, fill='blue') +
-  geom_point(data=large_agg1, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi), colour='Naive')) 
+  geom_point(data=large_agg1, aes(x=log(Group.1), y=log(esspi), colour='Naive')) 
 
-plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi)), colour='red', se=FALSE) + 
-  geom_smooth(data=large_agg1, method=lm, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi)), color='blue', se=FALSE)
+plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(Group.1), y=log(esspi)), colour='red', se=FALSE) + 
+  geom_smooth(data=large_agg1, method=lm, aes(x=log(Group.1), y=log(esspi)), color='blue', se=FALSE)
 
 plot
-ggsave('esspi_large.pdf')
+ggsave('esspi_large/esspi_large.pdf')
 
-fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
+fit <- lm(log(esspi) ~ log(Group.1), data=large_agg)
 fit
-fit1 <- lm(log(large_agg1$esspi) ~ log(large_agg1$Group.1), data=large_agg1)
+fit1 <- lm(log(esspi) ~ log(Group.1), data=large_agg1)
 fit1
 
 #/////////////////////////////////////////////////////////////////////
-#### check if slope is stable
+#### check if slope is stable with dimension
 #/////////////////////////////////////////////////////////////////////
 
 N = 50
-x = rep(0,N)
-for (i in 2:N) {
-  fit <- lm(log(tail(large_agg, i)$esspi) ~ log(tail(large_agg, i)$Group.1), data=tail(large_agg, -i))
-  x[i] = fit$coefficients[2]
+s = 20
+x = rep(0,(N-s))
+for (i in s:N) {
+  fit <- lm(log(esspi) ~ log(Group.1), data=tail(large_agg, i))
+  x[i-s+1] = fit$coefficients[2]
 }
-dat = data.frame(cbind(1:N,x))
+dat = data.frame(cbind(s:N,x))
 plot <- ggplot() + 
   xlab("data size") +
   ylab("slope") +
-  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]))
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]), colour="red")
 plot
 ggsave('slope_lb_2_to_50.pdf')
 
 
 N = 50
-y = rep(0,N)
-for (i in 2:N) {
-  fit <- lm(log(tail(large_agg1, i)$esspi) ~ log(tail(large_agg1, i)$Group.1), data=tail(large_agg1, -i))
-  y[i] = fit$coefficients[2]
+s = 20
+y = rep(0,(N-s))
+for (i in s:N) {
+  fit <- lm(log(esspi) ~ log(Group.1), data=tail(large_agg1, i))
+  y[i-s+1] = fit$coefficients[2]
 }
-dat = data.frame(cbind(1:N,y))
+dat1 = data.frame(cbind(s:N,y))
 plot <- ggplot() + 
   xlab("data size") +
   ylab("slope") +
-  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]))
+  geom_point(data=dat1, aes(x=dat1[,1], y=dat1[,2]), colour="blue") +
 plot
 ggsave('slope_nlb_2_to_50.pdf')
 
+plot <- ggplot() + 
+  xlab("data size") +
+  ylab("slope") +
+  labs(color='') +
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="LB")) +
+  geom_point(data=dat1, aes(x=dat1[,1], y=dat1[,2], colour="Naive")) 
+plot
+ggsave('slope_lb_nlb_2_to_50.pdf')
+
+
+#/////////////////////////////////////////////////////////////////////
+#### check if slope is stable with thresholding
+#/////////////////////////////////////////////////////////////////////
+
+large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
+N = 50
+z = rep(0,N+1)
+i = 1
+for (eps in seq(0.1,0.5,(0.5-0.1)/N)) {
+  large1_s = subset(large1, abs(mean - 0.5) < eps)
+  large_agg1_s = aggregate(large1_s["esspi"], list(large1_s$groupSize), mean)
+  fit <- lm(log(esspi) ~ log(Group.1), data=large_agg1_s)
+  z[i] = fit$coefficients[2]
+  i = i + 1
+}
+dat = data.frame(cbind(seq(0.1,0.5,(0.5-0.1)/N),z))
+plot <- ggplot() + 
+  xlab("eps") +
+  ylab("slope") +
+  labs(color='') +
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="LB"))
+plot
+ggsave('slope_lb_eps_0.1_to_0.5.pdf')
+
+large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_nlb.csv"))
+N = 50
+w = rep(0,N+1)
+i = 1
+for (eps in seq(0.1,0.5,(0.5-0.1)/N)) {
+  large1_s = subset(large1, abs(mean - 0.5) < eps)
+  large_agg1_s = aggregate(large1_s["esspi"], list(large1_s$groupSize), mean)
+  fit <- lm(log(esspi) ~ log(Group.1), data=large_agg1_s)
+  w[i] = fit$coefficients[2]
+  i = i + 1
+}
+
+dat1 = data.frame(cbind(seq(0.1,0.5,(0.5-0.1)/N),w))
+plot <- ggplot() + 
+  xlab("eps") +
+  ylab("slope") +
+  labs(color='') +
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="Naive"))
+plot
+ggsave('slope_nlb_eps_0.1_to_0.5.pdf')
+
+plot <- ggplot() + 
+  xlab("eps") +
+  ylab("slope") +
+  labs(color='') +
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="LB")) +
+  geom_point(data=dat1, aes(x=dat1[,1], y=dat1[,2], colour="Naive"))
+plot
+ggsave('slope_lb_nlb_eps_0.1_to_0.5.pdf')
 
 #/////////////////////////////////////////////////////////////////////
 #### esspi 150 to 200
@@ -241,19 +308,19 @@ plot <- ggplot() +
   ylab("log(ESS/Iter)") +
   labs(color='') +
   geom_ribbon(data=large_agg, aes(x=log(Group.1), ymax=log(high_q), ymin=log(low_q)), alpha=0.05, fill='red') +
-  geom_point(data=large_agg, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi), colour='LB')) +
+  geom_point(data=large_agg, aes(x=log(Group.1), y=log(esspi), colour='LB')) +
   geom_ribbon(data=large_agg1, aes(x=log(Group.1), ymax=log(high_q), ymin=log(low_q)), alpha=0.05, fill='blue') +
-  geom_point(data=large_agg1, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi), colour='Naive')) 
+  geom_point(data=large_agg1, aes(x=log(Group.1), y=log(esspi), colour='Naive')) 
 
 plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi)), colour='red', se=FALSE) + 
   geom_smooth(data=large_agg1, method=lm, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi)), color='blue', se=FALSE)
 
 plot
-ggsave('esspi_larger.pdf')
+ggsave('esspi_larger/esspi_larger.pdf')
 
-fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
+fit <- lm(log(esspi) ~ log(Group.1), data=large_agg)
 fit
-fit1 <- lm(log(large_agg1$esspi) ~ log(large_agg1$Group.1), data=large_agg1)
+fit1 <- lm(log(esspi) ~ log(Group.1), data=large_agg1)
 fit1
 
 #/////////////////////////////////////////////////////////////////////
@@ -318,11 +385,11 @@ require(dplyr)
 require(ggplot2)
 
 large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
-# large = subset(large, abs(mean - 0.5) < 0.4)
+large = subset(large, abs(mean - 0.5) < 0.4)
 large_agg = aggregate(large["esspi"], list(large$groupSize), min)
 
 large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_nlb.csv"))
-# large1 = subset(large1, abs(mean - 0.5) < 0.4)
+large1 = subset(large1, abs(mean - 0.5) < 0.4)
 large_agg1 = aggregate(large1["esspi"], list(large1$groupSize), min)
 
 plot <- ggplot() +     
@@ -336,7 +403,7 @@ plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(large_agg$Group.
   geom_smooth(data=large_agg1, method=lm, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi)), color='blue', se=FALSE)
 
 plot
-ggsave('esspi_large/esspi_large.pdf')
+ggsave('esspi_large/esspi_large_worst.pdf')
 
 fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
 fit
@@ -351,11 +418,11 @@ require(dplyr)
 require(ggplot2)
 
 large = na.omit(read.csv("esspi_larger/ess_per_iter_150_to_200_lb.csv"))
-# large = subset(large, abs(mean - 0.5) < 0.4)
+large = subset(large, abs(mean - 0.5) < 0.4)
 large_agg = aggregate(large["esspi"], list(large$groupSize), min)
 
 large1 = na.omit(read.csv("esspi_larger/ess_per_iter_150_to_200_nlb.csv"))
-# large1 = subset(large1, abs(mean - 0.5) < 0.4)
+large1 = subset(large1, abs(mean - 0.5) < 0.4)
 large_agg1 = aggregate(large1["esspi"], list(large1$groupSize), min)
 
 plot <- ggplot() +     
@@ -379,4 +446,14 @@ fit1
 #/////////////////////////////////////////////////////////////////////
 #### PyClone visualization
 #/////////////////////////////////////////////////////////////////////
+
+
+
+
+#/////////////////////////////////////////////////////////////////////
+#### auto-correlation plot
+#/////////////////////////////////////////////////////////////////////
+
+
+
 
