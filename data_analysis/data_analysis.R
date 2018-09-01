@@ -1,9 +1,41 @@
+# TODO: batch process everything
+# TODO: save Ising plot
+# TODO: make function and reuse code if possible
+
 #/////////////////////////////////////////////////////////////////////
 #### run this before everything
 #/////////////////////////////////////////////////////////////////////
 
-setwd("/Users/garyzhu/Desktop/data_analysis")
 
+root_dir <- "/home/kevinchern/blang/blang-paper-scripts/blangGradAssignment-scaffold/data_analysis"
+
+read_lots_of_files <- function(dir_name){
+  setwd(paste(root_dir,"/",dir_name,sep=""))
+  list_of_files <- list.files(pattern="*.csv")
+  list_of_files <- lapply(list_of_files, read.csv)
+  return (list_of_files)
+}
+
+aggregate_them_all <- function(lbs){
+  lbs <- lapply(lbs, na.omit)
+  lbs <- lapply(lbs, function(lb){
+  aggregate(lb["esspi"], list(lb$groupSize), mean)
+  })
+  return (lbs)
+}
+
+plot_them_all <- function(lbs, point=FALSE, id, names){
+  if (point){
+    plot <- ggplot(bind_rows(setNames(lbs, names), .id=id), aes(x=log(Group.1), y=log(esspi), colour=get(id))) +
+      labs(color=id) +
+      geom_point()
+  } else{
+    plot <- ggplot(bind_rows(setNames(lbs, names), .id=id), aes(x=log(Group.1), y=log(esspi), colour=get(id))) +
+      labs(color=id) +
+      geom_line()
+  }
+  plot
+}
 #/////////////////////////////////////////////////////////////////////
 #### power from 1 to 1/9
 #/////////////////////////////////////////////////////////////////////
@@ -11,52 +43,25 @@ setwd("/Users/garyzhu/Desktop/data_analysis")
 require(dplyr)
 require(ggplot2)
 
-lb1 = read.csv("esspi/ess_per_iter_aggregated_1.csv")
-lb2 = read.csv("esspi/ess_per_iter_aggregated_2.csv")
-lb3 = read.csv("esspi/ess_per_iter_aggregated_3.csv")
-lb4 = read.csv("esspi/ess_per_iter_aggregated_4.csv")
-lb5 = read.csv("esspi/ess_per_iter_aggregated_5.csv")
-lb6 = read.csv("esspi/ess_per_iter_aggregated_6.csv")
-lb7 = read.csv("esspi/ess_per_iter_aggregated_7.csv")
-lb8 = read.csv("esspi/ess_per_iter_aggregated_8.csv")
-lb9 = read.csv("esspi/ess_per_iter_aggregated_9.csv")
+list_of_files <- read_lots_of_files("esspi")
+lbs <- aggregate_them_all(list_of_files)
+names <- c(1,2,3,4,5,6,7,8,9)
+plot_them_all(lbs, id="temperature", names = names)
+ggsave("esspit.pdf")
 
-lb1 = na.omit(lb1)
-lb2 = na.omit(lb2)
-lb3 = na.omit(lb3)
-lb4 = na.omit(lb4)
-lb5 = na.omit(lb5)
-lb6 = na.omit(lb6)
-lb7 = na.omit(lb7)
-lb8 = na.omit(lb8)
-lb9 = na.omit(lb9)
+#/////////////////////////////////////////////////////////////////////
+#### groupSize from 3 to 9, single permutation
+#/////////////////////////////////////////////////////////////////////
 
-lb1_agg = aggregate(lb1["esspi"], list(lb1$groupSize), mean)
-lb2_agg = aggregate(lb2["esspi"], list(lb2$groupSize), mean)
-lb3_agg = aggregate(lb3["esspi"], list(lb3$groupSize), mean)
-lb4_agg = aggregate(lb4["esspi"], list(lb4$groupSize), mean)
-lb5_agg = aggregate(lb5["esspi"], list(lb5$groupSize), mean)
-lb6_agg = aggregate(lb6["esspi"], list(lb6$groupSize), mean)
-lb7_agg = aggregate(lb7["esspi"], list(lb7$groupSize), mean)
-lb8_agg = aggregate(lb8["esspi"], list(lb8$groupSize), mean)
-lb9_agg = aggregate(lb9["esspi"], list(lb9$groupSize), mean)
+require(dplyr)
+require(ggplot2)
 
-plot <- ggplot() +     
-  xlab("log(Group Size)") +
-  ylab("log(ESS/Iter)") +
-  labs(color="T") +
-  geom_point(data=lb1_agg,aes(x=log(Group.1), y=log(esspi), colour='1')) +
-  geom_point(data=lb2_agg,aes(x=log(Group.1), y=log(esspi), colour='2')) +
-  geom_point(data=lb3_agg,aes(x=log(Group.1), y=log(esspi), colour='3')) +
-  geom_point(data=lb4_agg,aes(x=log(Group.1), y=log(esspi), colour='4')) +
-  geom_point(data=lb5_agg,aes(x=log(Group.1), y=log(esspi), colour='5')) +
-  geom_point(data=lb6_agg,aes(x=log(Group.1), y=log(esspi), colour='6')) +
-  geom_point(data=lb7_agg,aes(x=log(Group.1), y=log(esspi), colour='7')) +
-  geom_point(data=lb8_agg,aes(x=log(Group.1), y=log(esspi), colour='8')) +
-  geom_point(data=lb9_agg,aes(x=log(Group.1), y=log(esspi), colour='9')) 
-
-plot
-ggsave("esspi/esspit.pdf")
+# POINT PLOT
+list_of_files <- read_lots_of_files("esspig")
+lbgs <- aggregate_them_all(list_of_files)
+names <- c(3,4,5,6,7,8,9)
+plot_them_all(lbgs, point=TRUE, id="groupSize", names= names)
+ggsave('esspig.pdf')
 
 #/////////////////////////////////////////////////////////////////////
 #### balancing function: max, min, sqrt, baker, naive
@@ -65,27 +70,11 @@ ggsave("esspi/esspit.pdf")
 require(dplyr)
 require(ggplot2)
 
-lbmin = na.omit(read.csv("esspibf/ess_per_iter_min.csv"))
-lbmax = na.omit(read.csv("esspibf/ess_per_iter_max.csv"))
-lbbaker = na.omit(read.csv("esspibf/ess_per_iter_baker.csv"))
-lbsqrt = na.omit(read.csv("esspibf/ess_per_iter_sqrt.csv"))
-
-lbmin = aggregate(lbmin["esspi"], list(lbmin$groupSize), mean)
-lbmax = aggregate(lbmax["esspi"], list(lbmax$groupSize), mean)
-lbbaker = aggregate(lbbaker["esspi"], list(lbbaker$groupSize), mean)
-lbsqrt = aggregate(lbsqrt["esspi"], list(lbsqrt$groupSize), mean)
-
-plot <- ggplot() +     
-  xlab("log(Group Size)") +
-  ylab("log(ESS/Iter)") +
-  labs(color="BF") +
-  geom_point(data=lbmin, aes(x=log(Group.1), y=log(esspi), colour='min')) +
-  geom_point(data=lbmax, aes(x=log(Group.1), y=log(esspi), colour='max')) +
-  geom_point(data=lbbaker, aes(x=log(Group.1), y=log(esspi), colour='baker')) +
-  geom_point(data=lbsqrt, aes(x=log(Group.1), y=log(esspi), colour='sqrt'))
-  
-plot
-ggsave('esspibf/esspibf.pdf')
+list_of_files <- read_lots_of_files("esspibf")
+lbs <- aggregate_them_all(list_of_files)
+names = c("baker", "max", "min", "sqrt")
+plot_them_all(lbs, id="balancing functions", names=names)
+ggsave('esspibf.pdf')
 
 #/////////////////////////////////////////////////////////////////////
 #### esspi 100 to 150
@@ -95,7 +84,7 @@ require(dplyr)
 require(ggplot2)
 
 large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
-# large = subset(large, abs(mean - 0.5) < 0.4)
+large = subset(large, abs(mean - 0.5) < 0.4)
 low_q = aggregate(large["esspi"], list(large$groupSize), quantile, probs=0.05)
 high_q = aggregate(large["esspi"], list(large$groupSize), quantile, probs=0.95)
 large_agg = aggregate(large["esspi"], list(large$groupSize), mean)
@@ -103,7 +92,7 @@ large_agg["low_q"] = low_q$esspi
 large_agg["high_q"] = high_q$esspi
 
 large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_nlb.csv"))
-# large1 = subset(large1, abs(mean - 0.5) < 0.4)
+large1 = subset(large1, abs(mean - 0.5) < 0.4)
 low_q1 = aggregate(large1["esspi"], list(large1$groupSize), quantile, probs=0.05)
 high_q1 = aggregate(large1["esspi"], list(large1$groupSize), quantile, probs=0.95)
 large_agg1 = aggregate(large1["esspi"], list(large1$groupSize), mean)
@@ -145,9 +134,10 @@ dat = data.frame(cbind(s:N,x))
 plot <- ggplot() + 
   xlab("data size") +
   ylab("slope") +
-  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]), color="red")
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]), colour="red")
 plot
 ggsave('slope_lb_2_to_50.pdf')
+
 
 N = 50
 s = 20
@@ -160,7 +150,7 @@ dat1 = data.frame(cbind(s:N,y))
 plot <- ggplot() + 
   xlab("data size") +
   ylab("slope") +
-  geom_point(data=dat1, aes(x=dat1[,1], y=dat1[,2]), color="blue") 
+  geom_point(data=dat1, aes(x=dat1[,1], y=dat1[,2]), colour="blue") +
 plot
 ggsave('slope_nlb_2_to_50.pdf')
 
@@ -178,12 +168,12 @@ ggsave('slope_lb_nlb_2_to_50.pdf')
 #### check if slope is stable with thresholding
 #/////////////////////////////////////////////////////////////////////
 
-large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
+large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
 N = 50
 z = rep(0,N+1)
 i = 1
 for (eps in seq(0.1,0.5,(0.5-0.1)/N)) {
-  large1_s = subset(large, abs(mean - 0.5) < eps)
+  large1_s = subset(large1, abs(mean - 0.5) < eps)
   large_agg1_s = aggregate(large1_s["esspi"], list(large1_s$groupSize), mean)
   fit <- lm(log(esspi) ~ log(Group.1), data=large_agg1_s)
   z[i] = fit$coefficients[2]
@@ -194,7 +184,7 @@ plot <- ggplot() +
   xlab("eps") +
   ylab("slope") +
   labs(color='') +
-  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]), colour="red")
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="LB"))
 plot
 ggsave('slope_lb_eps_0.1_to_0.5.pdf')
 
@@ -215,7 +205,7 @@ plot <- ggplot() +
   xlab("eps") +
   ylab("slope") +
   labs(color='') +
-  geom_point(data=dat, aes(x=dat[,1], y=dat[,2]), colour="blue")
+  geom_point(data=dat, aes(x=dat[,1], y=dat[,2], colour="Naive"))
 plot
 ggsave('slope_nlb_eps_0.1_to_0.5.pdf')
 
@@ -333,28 +323,22 @@ require(dplyr)
 require(ggplot2)
 
 large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
-# large = subset(large, abs(mean - 0.5) < 0.4)
+large = subset(large, abs(mean - 0.5) < 0.4)
 large_agg = aggregate(large["esspi"], list(large$groupSize), min)
-low_q = aggregate(large["esspi"], list(large$groupSize), quantile, probs=0.05)
-large_agg["low_q"] = low_q$esspi
 
 large1 = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_nlb.csv"))
-# large1 = subset(large1, abs(mean - 0.5) < 0.4)
+large1 = subset(large1, abs(mean - 0.5) < 0.4)
 large_agg1 = aggregate(large1["esspi"], list(large1$groupSize), min)
-low_q1 = aggregate(large1["esspi"], list(large1$groupSize), quantile, probs=0.05)
-large_agg1["low_q"] = low_q1$esspi
 
 plot <- ggplot() +     
   xlab("log(Group Size)") +
   ylab("log(ESS/Iter)") +
   labs(color='') +
-  geom_ribbon(data=large_agg, aes(x=log(Group.1), ymax=log(low_q), ymin=log(esspi)), alpha=0.05, fill='red') +
-  geom_ribbon(data=large_agg1, aes(x=log(Group.1), ymax=log(low_q), ymin=log(esspi)), alpha=0.05, fill='blue') +
-  geom_point(data=large_agg, aes(x=log(Group.1), y=log(esspi), colour='LB')) +
-  geom_point(data=large_agg1, aes(x=log(Group.1), y=log(esspi), colour='Naive')) 
+  geom_point(data=large_agg, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi), colour='LB')) +
+  geom_point(data=large_agg1, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi), colour='Naive')) 
 
-plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(Group.1), y=log(esspi)), colour='red', se=FALSE) + 
-  geom_smooth(data=large_agg1, method=lm, aes(x=log(Group.1), y=log(esspi)), color='blue', se=FALSE)
+plot <- plot + geom_smooth(data=large_agg, method=lm, aes(x=log(large_agg$Group.1), y=log(large_agg$esspi)), colour='red', se=FALSE) + 
+  geom_smooth(data=large_agg1, method=lm, aes(x=log(large_agg1$Group.1), y=log(large_agg1$esspi)), color='blue', se=FALSE)
 
 plot
 ggsave('esspi_large/esspi_large_worst.pdf')
@@ -363,10 +347,6 @@ fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
 fit
 fit1 <- lm(log(large_agg1$esspi) ~ log(large_agg1$Group.1), data=large_agg1)
 fit1
-
-
-
-
 
 #/////////////////////////////////////////////////////////////////////
 #### Worst-case 150 to 200
@@ -400,3 +380,18 @@ fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
 fit
 fit1 <- lm(log(large_agg1$esspi) ~ log(large_agg1$Group.1), data=large_agg1)
 fit1
+
+#/////////////////////////////////////////////////////////////////////
+#### PyClone visualization
+#/////////////////////////////////////////////////////////////////////
+
+
+
+
+#/////////////////////////////////////////////////////////////////////
+#### auto-correlation plot
+#/////////////////////////////////////////////////////////////////////
+
+
+
+
