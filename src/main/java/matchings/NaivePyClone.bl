@@ -1,16 +1,18 @@
 package matchings
 
 model NaivePyClone { 
-  random List<RealVar> p ?: latentRealList(4)
-  random List<IntVar> z ?: latentIntList(100)
-  random List<IntVar> x ?: latentIntList(100) 
+  param Integer M ?: 4 // number of clusters
+  param Integer N ?: 100 // number of mutations
+  random List<RealVar> p ?: latentRealList(M) // cellular prevalence
+  random List<IntVar> z ?: latentIntList(100) // cluster indicator
+  random List<IntVar> x ?: latentIntList(100) // emission
   laws {
-  	for (int i: 0..< 4) {
+  	for (int i: 0..< M) {
   	  p.get(i) ~ ContinuousUniform(0,1)
   	}
-  	for (int i: 0..< 100) {
-      z.get(i) ~ DiscreteUniform(0,4)
-      x.get(i) | Integer j = z.get(i), p ~ Binomial(100, p.get(j))
+  	for (int i: 0..< N) {
+      z.get(i) ~ DiscreteUniform(0,M)
+      x.get(i) | Integer j = z.get(i), p ~ Binomial(N, p.get(j))
     }
   }
 }
