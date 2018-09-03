@@ -1,7 +1,3 @@
-# TODO: batch process everything
-# TODO: save Ising plot
-# TODO: make function and reuse code if possible
-
 #/////////////////////////////////////////////////////////////////////
 #### run this before everything
 #/////////////////////////////////////////////////////////////////////
@@ -36,6 +32,7 @@ plot_them_all <- function(lbs, point=FALSE, id, names){
   }
   plot
 }
+
 #/////////////////////////////////////////////////////////////////////
 #### power from 1 to 1/9
 #/////////////////////////////////////////////////////////////////////
@@ -48,20 +45,6 @@ lbs <- aggregate_them_all(list_of_files)
 names <- c(1,2,3,4,5,6,7,8,9)
 plot_them_all(lbs, id="temperature", names = names)
 ggsave("esspit.pdf")
-
-#/////////////////////////////////////////////////////////////////////
-#### groupSize from 3 to 9, single permutation
-#/////////////////////////////////////////////////////////////////////
-
-require(dplyr)
-require(ggplot2)
-
-# POINT PLOT
-list_of_files <- read_lots_of_files("esspig")
-lbgs <- aggregate_them_all(list_of_files)
-names <- c(3,4,5,6,7,8,9)
-plot_them_all(lbgs, point=TRUE, id="groupSize", names= names)
-ggsave('esspig.pdf')
 
 #/////////////////////////////////////////////////////////////////////
 #### balancing function: max, min, sqrt, baker, naive
@@ -262,59 +245,6 @@ fit1 <- lm(log(esspi) ~ log(Group.1), data=large_agg1)
 fit1
 
 #/////////////////////////////////////////////////////////////////////
-#### Ising visualization 
-#/////////////////////////////////////////////////////////////////////
-
-library(gridGraphics)
-library(grid)
-library(gridExtra)
-library(gplots)
-
-ising = read.csv("model_viz/Ising/vertices.csv")
-
-n = 3
-t = 2
-size = n^2-1
-
-grab_grob <- function(){
-  grid.echo()
-  grid.grab()
-}
-
-m = 5
-gl <- lapply(seq(1,size*t*m,size), function(i){
-  sub_ising = matrix(ising[i:(i+size),3],ncol=n,nrow=n)
-  heatmap(sub_ising, Rowv = NA, Colv = NA, scale = "none", col=c("black", "white"), labRow = "", labCol = "")
-  grab_grob()
-})
-
-grid.arrange(grobs=gl, ncol=t, clip=TRUE)
-
-
-#/////////////////////////////////////////////////////////////////////
-#### LDA tabulation
-#/////////////////////////////////////////////////////////////////////
-
-num_topics = 2
-num_documents = 4
-num_samples = 1000
-
-phi = read.csv("model_viz/LDA/phi.csv")
-
-i = 1
-res = matrix(0,num_documents,num_topics)
-for (i in 1:num_documents) {
-  for (j in 1:num_topics) {
-    ss = 0
-    for (k in 1:num_samples) {
-      ss = ss + phi[(k-1)*(num_topics*num_documents)+(i-1)*num_topics+j,4]
-    }
-    res[i,j] = ss/num_samples
-  }
-}
-res
-
-#/////////////////////////////////////////////////////////////////////
 #### Worst-case 100 to 150
 #/////////////////////////////////////////////////////////////////////
 
@@ -380,18 +310,5 @@ fit <- lm(log(large_agg$esspi) ~ log(large_agg$Group.1), data=large_agg)
 fit
 fit1 <- lm(log(large_agg1$esspi) ~ log(large_agg1$Group.1), data=large_agg1)
 fit1
-
-#/////////////////////////////////////////////////////////////////////
-#### PyClone visualization
-#/////////////////////////////////////////////////////////////////////
-
-
-
-
-#/////////////////////////////////////////////////////////////////////
-#### auto-correlation plot
-#/////////////////////////////////////////////////////////////////////
-
-
 
 
