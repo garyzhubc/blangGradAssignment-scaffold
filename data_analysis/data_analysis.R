@@ -2,7 +2,6 @@
 #### run this before everything
 #/////////////////////////////////////////////////////////////////////
 
-
 root_dir <- "/home/kevinchern/blang/blang-paper-scripts/blangGradAssignment-scaffold/data_analysis"
 
 read_lots_of_files <- function(dir_name){
