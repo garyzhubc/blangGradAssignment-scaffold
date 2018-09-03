@@ -2,6 +2,9 @@
 #### run this before everything
 #/////////////////////////////////////////////////////////////////////
 
+require(dplyr)
+require(ggplot2)
+
 root_dir <- "/home/kevinchern/blang/blang-paper-scripts/blangGradAssignment-scaffold/data_analysis"
 
 read_lots_of_files <- function(dir_name){
@@ -36,9 +39,6 @@ plot_them_all <- function(lbs, point=FALSE, id, names){
 #### temperature from 1 to 1/9
 #/////////////////////////////////////////////////////////////////////
 
-require(dplyr)
-require(ggplot2)
-
 list_of_files <- read_lots_of_files("esspi")
 lbs <- aggregate_them_all(list_of_files)
 names <- c(1,2,3,4,5,6,7,8,9)
@@ -49,9 +49,6 @@ ggsave("esspit.pdf")
 #### balancing function: max, min, sqrt, baker, naive
 #/////////////////////////////////////////////////////////////////////
 
-require(dplyr)
-require(ggplot2)
-
 list_of_files <- read_lots_of_files("esspibf")
 lbs <- aggregate_them_all(list_of_files)
 names = c("baker", "max", "min", "sqrt")
@@ -61,9 +58,6 @@ ggsave('esspibf.pdf')
 #/////////////////////////////////////////////////////////////////////
 #### MESSPI 100 to 150
 #/////////////////////////////////////////////////////////////////////
-
-require(dplyr)
-require(ggplot2)
 
 large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
 large = subset(large, abs(mean - 0.5) < 0.4)
@@ -204,9 +198,6 @@ ggsave('slope_lb_nlb_eps_0.1_to_0.5.pdf')
 #### MESSPI 150 to 200
 #/////////////////////////////////////////////////////////////////////
 
-require(dplyr)
-require(ggplot2)
-
 large = na.omit(read.csv("esspi_larger/ess_per_iter_150_to_200_lb.csv"))
 large = subset(large, abs(mean - 0.5) < 0.4)
 low_q = aggregate(large["esspi"], list(large$groupSize), quantile, probs=0.05)
@@ -247,9 +238,6 @@ fit1
 #### MinESSPI 100 to 150
 #/////////////////////////////////////////////////////////////////////
 
-require(dplyr)
-require(ggplot2)
-
 large = na.omit(read.csv("esspi_large/ess_per_iter_aggregated_lb.csv"))
 large = subset(large, abs(mean - 0.5) < 0.4)
 large_agg = aggregate(large["esspi"], list(large$groupSize), min)
@@ -279,9 +267,6 @@ fit1
 #/////////////////////////////////////////////////////////////////////
 #### MinESSPI 150 to 200
 #/////////////////////////////////////////////////////////////////////
-
-require(dplyr)
-require(ggplot2)
 
 large = na.omit(read.csv("esspi_larger/ess_per_iter_150_to_200_lb.csv"))
 large = subset(large, abs(mean - 0.5) < 0.4)
