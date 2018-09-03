@@ -16,8 +16,3 @@
 - Clone the forked repo into your Blang IDE's workspace folder.
 - `cd` into the cloned repo, then type `./gradlew eclipse`.
 - Import the project into eclipse.
-
-## Run Pipe-line
-
-- Install [nedry](https://github.com/alexandrebouchard/nedry)
-- `cd` into nextflow, then `./nextflow run permuted-clustering.nf -resume | nf-monitor --open true` 
