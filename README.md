@@ -19,5 +19,5 @@
 
 ## Run Pipe-line
 
-- Install nedry https://github.com/alexandrebouchard/nedry
+- Install [nedry](https://github.com/alexandrebouchard/nedry)
 - `cd` into nextflow, then `./nextflow run permuted-clustering.nf -resume | nf-monitor --open true` 
