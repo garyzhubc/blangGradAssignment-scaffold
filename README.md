@@ -17,3 +17,6 @@
 - ``cd`` into the cloned repo, then type ``./gradlew eclipse``.
 - Import the project into eclipse.
 
+## Run Pipe-line
+
+- `./nextflow run permuted-clustering.nf -resume | nf-monitor --open true` samples will be organized in folder `links`
