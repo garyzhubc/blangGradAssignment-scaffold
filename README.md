@@ -4,6 +4,11 @@
 
 ## Overview
 
+- `src/main/java/matchings/Permutation.xtend` Permutations linked to Locally Balanced sampler
+- `src/main/java/matchings/PermutationSamplerLocallyBalanced.java` Locally Balanced sampler
+- `src/main/java/matchings/PermutationSampler.java` Naive Metropolis sampler
+- `src/main/java/matchings/PermutationESS.java` Calculate ESS per iteraiton 
+- `src/main/java/matchings/PermutedClustering.bl` Anynomous game model 
 
 ## Setup
 
