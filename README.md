@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/garyzhubc/blangGradAssignment-scaffold.png?branch=master)](https://travis-ci.org/garyzhubc/blangGradAssignment-scaffold)
+[![Build Status](https://travis-ci.org/garyzhubc/mcmc-scalability.png?branch=master)](https://travis-ci.org/garyzhubc/mcmc-scalability)
 
 # Assessing MCMC Scalability Using Blang
 
